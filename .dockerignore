@@ -1,4 +1,12 @@
 node_modules
 dist
 .git
+.github
 .env
+coverage
+playwright-report
+test-results
+tests
+docs
+bin
+*.md

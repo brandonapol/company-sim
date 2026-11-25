@@ -13,13 +13,20 @@ export type Config = {
 
 type Env = Record<string, string | undefined>
 
-const packageVersion = (): string => {
+const readText = (relative: string): string | null => {
   try {
-    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version?: string }
-    return pkg.version ?? '0.0.0'
+    return readFileSync(new URL(relative, import.meta.url), 'utf8')
   } catch {
-    return '0.0.0'
+    return null
   }
+}
+
+const fallbackVersion = (): string => {
+  const released = readText('../VERSION')?.trim()
+  if (released) return released
+  const pkg = readText('../package.json')
+  const version = pkg ? (JSON.parse(pkg) as { version?: string }).version : undefined
+  return `${version ?? '0.0.0'}-dev`
 }
 
 export const loadConfig = (env: Env): Config => {
@@ -33,7 +40,7 @@ export const loadConfig = (env: Env): Config => {
     password,
     port,
     host: env.HOST ?? (password ? '0.0.0.0' : '127.0.0.1'),
-    version: env.APP_VERSION?.trim() || `${packageVersion()}-dev`,
+    version: env.APP_VERSION?.trim() || fallbackVersion(),
     staticRoot: env.STATIC_ROOT ?? './dist',
     keys: {
       anthropic: env.ANTHROPIC_API_KEY ?? '',
