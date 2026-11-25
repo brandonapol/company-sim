@@ -75,18 +75,29 @@ export const CompanyView = ({ state }: { state: State }) => {
         <h3>The numbers behind the sim</h3>
         <p className="muted">
           This is a deliberately simple model so that hiring has a visible cost: payroll is salaries plus 25% load, cash
-          moves by net burn each week, and monthly revenue grows at the base rate plus a diminishing boost from go-to-market and
-          product headcount. Edit anything here to simulate a fundraise, a price change or a bad quarter.
+          moves by net burn each week, and monthly revenue grows at the base rate plus a diminishing boost from
+          go-to-market and product headcount. Edit anything here to simulate a fundraise, a price change or a bad
+          quarter.
         </p>
         <div className="grid2">
           <Field label="Cash ($)">
-            <NumberInput value={Math.round(company.cash)} min={-100_000_000} step={50_000} onChange={(v) => updateCompany({ cash: v })} />
+            <NumberInput
+              value={Math.round(company.cash)}
+              min={-100_000_000}
+              step={50_000}
+              onChange={(v) => updateCompany({ cash: v })}
+            />
           </Field>
           <Field label="Monthly revenue ($)">
             <NumberInput value={Math.round(company.mrr)} step={1_000} onChange={(v) => updateCompany({ mrr: v })} />
           </Field>
           <Field label="Base revenue growth (% per month)">
-            <NumberInput value={company.baseGrowthPct} min={-50} step={0.5} onChange={(v) => updateCompany({ baseGrowthPct: v })} />
+            <NumberInput
+              value={company.baseGrowthPct}
+              min={-50}
+              step={0.5}
+              onChange={(v) => updateCompany({ baseGrowthPct: v })}
+            />
           </Field>
           <Field label="Non-payroll costs ($ per month)">
             <NumberInput value={company.otherBurn} step={1_000} onChange={(v) => updateCompany({ otherBurn: v })} />
@@ -145,7 +156,10 @@ const PersonModal = ({ person, state, onClose }: { person: Person; state: State;
           <NumberInput value={person.salary} step={5_000} onChange={(v) => updatePerson(person.id, { salary: v })} />
         </Field>
         <Field label="Runs on">
-          <select value={person.provider} onChange={(e) => updatePerson(person.id, { provider: e.target.value as Provider })}>
+          <select
+            value={person.provider}
+            onChange={(e) => updatePerson(person.id, { provider: e.target.value as Provider })}
+          >
             {PROVIDERS.map((p) => (
               <option key={p} value={p}>
                 {p}
@@ -207,7 +221,8 @@ export const PeopleView = ({ state }: { state: State }) => {
         People <span className="muted">{staff.length + 1} including you</span>
       </h2>
       <p className={directs > 8 ? 'warn' : 'muted'}>
-        You have {directs} direct reports.{directs > 8 ? ' Most people manage 5 to 8 well. Time to think about org design.' : ''}
+        You have {directs} direct reports.
+        {directs > 8 ? ' Most people manage 5 to 8 well. Time to think about org design.' : ''}
       </p>
       {DEPTS.map((dept) => {
         const members = staff.filter((p) => p.dept === dept).sort((a, b) => LEVEL_RANK[b.level] - LEVEL_RANK[a.level])
@@ -320,7 +335,14 @@ const ReqFormCard = ({ state }: { state: State }) => {
             ))}
           </select>
         </Field>
-        <Field label="Who runs the search" hint={canDelegate ? 'Delegated roles fill on their own in about two weeks; you do not meet the hires.' : 'Pick a manager other than yourself to delegate.'}>
+        <Field
+          label="Who runs the search"
+          hint={
+            canDelegate
+              ? 'Delegated roles fill on their own in about two weeks; you do not meet the hires.'
+              : 'Pick a manager other than yourself to delegate.'
+          }
+        >
           <select value={mode} onChange={(e) => setMode(e.target.value as ReqMode)}>
             <option value="direct">I interview candidates myself</option>
             <option value="delegated" disabled={!canDelegate}>
@@ -375,18 +397,23 @@ export const HiringView = ({ state, ui }: { state: State; ui: Ui }) => {
               <h3>
                 {req.title}{' '}
                 <span className="muted">
-                  {LEVEL_LABEL[req.level]} · {DEPT_LABEL[req.dept]} · {money(req.salary)} · reports to {manager?.name ?? 'you'}
+                  {LEVEL_LABEL[req.level]} · {DEPT_LABEL[req.dept]} · {money(req.salary)} · reports to{' '}
+                  {manager?.name ?? 'you'}
                 </span>
               </h3>
               <span className={`tag ${req.status}`}>
-                {req.status === 'open' ? (req.mode === 'delegated' ? `${req.filled}/${req.count} filled` : 'open') : req.status}
+                {req.status === 'open'
+                  ? req.mode === 'delegated'
+                    ? `${req.filled}/${req.count} filled`
+                    : 'open'
+                  : req.status}
               </span>
             </div>
             {req.notes ? <p className="muted">{req.notes}</p> : null}
             {req.mode === 'delegated' && req.status === 'open' ? (
               <p className="muted">
-                Delegated to {manager?.name ?? 'the hiring manager'} in week {req.openedWeek}. Hires start arriving in week{' '}
-                {req.openedWeek + 2}.
+                Delegated to {manager?.name ?? 'the hiring manager'} in week {req.openedWeek}. Hires start arriving in
+                week {req.openedWeek + 2}.
               </p>
             ) : null}
             {candidates.map((c) => (
@@ -431,7 +458,10 @@ export const CurriculumView = ({ state }: { state: State }) => {
   return (
     <div className="page">
       <h2>
-        Curriculum <span className="muted">{done} of {scenarios.length} situations decided</span>
+        Curriculum{' '}
+        <span className="muted">
+          {done} of {scenarios.length} situations decided
+        </span>
       </h2>
       <p className="muted">
         These are the decisions that tend to arrive at each company size. One new situation is raised by your team each
@@ -440,32 +470,39 @@ export const CurriculumView = ({ state }: { state: State }) => {
       {STAGES.map((stage) => (
         <div className={`card ${stage.index === current ? 'current' : ''}`} key={stage.index}>
           <h3>
-            {stage.index + 1}. {stage.name} <span className="muted">{stage.min}-{stage.max} people · {stage.theme}</span>
+            {stage.index + 1}. {stage.name}{' '}
+            <span className="muted">
+              {stage.min}-{stage.max} people · {stage.theme}
+            </span>
             {stage.index === current ? <span className="tag open">you are here</span> : null}
           </h3>
           <p className="muted">{stage.ceoJob}</p>
-          {scenarios.filter((s) => s.stage === stage.index).map((s) => {
-            const run = state.scenarios.find((r) => r.id === s.id)
-            return (
-              <details key={s.id} className="lesson">
-                <summary>
-                  <span className={`dot ${run?.status ?? 'todo'}`} />
-                  <span className="tag">{s.topic}</span> {s.title}
-                  <span className="muted">
-                    {run?.status === 'decided' ? ` · decided week ${run.decidedWeek}` : run ? ' · open' : ''}
-                  </span>
-                </summary>
-                <p>{s.primer}</p>
-                <p className="muted">Frameworks to look up: {s.frameworks.join(' · ')}</p>
-                <p className="muted">What good looks like: {s.rubric}</p>
-                {run ? (
-                  <button onClick={() => setView({ kind: 'channel', id: run.channelId })}>Go to the conversation</button>
-                ) : (
-                  <button onClick={() => startScenario(s.id)}>Have the team raise this now</button>
-                )}
-              </details>
-            )
-          })}
+          {scenarios
+            .filter((s) => s.stage === stage.index)
+            .map((s) => {
+              const run = state.scenarios.find((r) => r.id === s.id)
+              return (
+                <details key={s.id} className="lesson">
+                  <summary>
+                    <span className={`dot ${run?.status ?? 'todo'}`} />
+                    <span className="tag">{s.topic}</span> {s.title}
+                    <span className="muted">
+                      {run?.status === 'decided' ? ` · decided week ${run.decidedWeek}` : run ? ' · open' : ''}
+                    </span>
+                  </summary>
+                  <p>{s.primer}</p>
+                  <p className="muted">Frameworks to look up: {s.frameworks.join(' · ')}</p>
+                  <p className="muted">What good looks like: {s.rubric}</p>
+                  {run ? (
+                    <button onClick={() => setView({ kind: 'channel', id: run.channelId })}>
+                      Go to the conversation
+                    </button>
+                  ) : (
+                    <button onClick={() => startScenario(s.id)}>Have the team raise this now</button>
+                  )}
+                </details>
+              )
+            })}
         </div>
       ))}
     </div>
@@ -476,8 +513,8 @@ export const DecisionsView = ({ state }: { state: State }) => (
   <div className="page">
     <h2>Decision log</h2>
     <p className="muted">
-      Record decisions from any channel. Rereading your own reasoning a few weeks later is one of the cheapest ways to get
-      better at this.
+      Record decisions from any channel. Rereading your own reasoning a few weeks later is one of the cheapest ways to
+      get better at this.
     </p>
     {state.decisions.length === 0 ? <p className="muted">No decisions recorded yet.</p> : null}
     {[...state.decisions].reverse().map((d) => (
@@ -533,7 +570,9 @@ export const MentorView = ({ state, ui }: { state: State; ui: Ui }) => {
         decisions with what good looks like for each situation, and tells you what you missed. You have posted {since}{' '}
         messages since the last review.
       </p>
-      {reviews.length === 0 ? <p className="muted">No reviews yet. Work through a situation or two, then ask for one.</p> : null}
+      {reviews.length === 0 ? (
+        <p className="muted">No reviews yet. Work through a situation or two, then ask for one.</p>
+      ) : null}
       {reviews.map((r) => (
         <div className="card" key={r.id}>
           <h3>

@@ -71,7 +71,9 @@ const ScenarioCard = ({
       <div className="scenario-head">
         <span className="tag">{scenario.topic}</span>
         <b>{scenario.title}</b>
-        <span className="muted">{run?.status === 'decided' ? `decided in week ${run.decidedWeek}` : 'needs your decision'}</span>
+        <span className="muted">
+          {run?.status === 'decided' ? `decided in week ${run.decidedWeek}` : 'needs your decision'}
+        </span>
       </div>
       <details>
         <summary>What an MBA would tell you first</summary>
@@ -116,8 +118,8 @@ const MessageRow = ({
 const CandidateBar = ({ person }: { person: Person }) => (
   <div className="candidate-bar">
     <div>
-      <b>Interview</b> for {person.title} ({LEVEL_LABEL[person.level]}, {DEPT_LABEL[person.dept]}). Asking {money(person.salary)}.
-      <div className="muted">{person.background}</div>
+      <b>Interview</b> for {person.title} ({LEVEL_LABEL[person.level]}, {DEPT_LABEL[person.dept]}). Asking{' '}
+      {money(person.salary)}.<div className="muted">{person.background}</div>
       <div className="muted">
         Strengths: {person.strengths.join('; ') || 'unknown'}. Visible concerns: {person.concerns.join('; ') || 'none'}.
       </div>

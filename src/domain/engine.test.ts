@@ -149,7 +149,10 @@ describe('cost and pacing controls', () => {
 
   it('stops at the daily token budget', () => {
     const now = Date.now()
-    const state = { ...emptyState(), usage: { [dayKey(now)]: { anthropic: { input: 140_000, output: 10_000, calls: 9 } } } }
+    const state = {
+      ...emptyState(),
+      usage: { [dayKey(now)]: { anthropic: { input: 140_000, output: 10_000, calls: 9 } } },
+    }
     expect(overBudget(state, now)).toBe(true)
     expect(overBudget({ ...state, usage: {} }, now)).toBe(false)
   })

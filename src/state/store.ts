@@ -21,6 +21,7 @@ export type Ui = {
   notice: string | null
   serverKeys: Record<RealProvider, boolean>
   serverUp: boolean
+  serverVersion: string
   view: View
 }
 
@@ -38,6 +39,7 @@ let snapshot: Snapshot = {
     notice: null,
     serverKeys: { anthropic: false, openai: false, xai: false },
     serverUp: true,
+    serverVersion: '',
     view: { kind: 'channel', id: 'leadership' },
   },
 }

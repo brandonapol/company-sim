@@ -107,8 +107,13 @@ const newMessage = (
   scenarioId,
 })
 
-const say = (channelId: string, authorId: string, text: string, kind: MessageKind = 'chat', scenarioId: string | null = null) =>
-  update((s) => ({ ...s, messages: [...s.messages, newMessage(s, channelId, authorId, text, kind, scenarioId)] }))
+const say = (
+  channelId: string,
+  authorId: string,
+  text: string,
+  kind: MessageKind = 'chat',
+  scenarioId: string | null = null,
+) => update((s) => ({ ...s, messages: [...s.messages, newMessage(s, channelId, authorId, text, kind, scenarioId)] }))
 
 const recordUsage = (provider: Provider, res: ChatResponse) =>
   update((s) => {
@@ -191,7 +196,11 @@ const speak = async (personId: string, channelId: string, mode: 'reply' | 'unpro
     const text = await callModel({
       wanted: person.provider,
       system: candidate
-        ? candidateSystem(state, person, state.reqs.find((r) => r.id === person.reqId))
+        ? candidateSystem(
+            state,
+            person,
+            state.reqs.find((r) => r.id === person.reqId),
+          )
         : employeeSystem(state, person),
       prompt: mode === 'reply' ? replyPrompt(state, channel, person) : unpromptedPrompt(state, channel, person),
       maxTokens: chatTokens(state.settings) + (candidate ? 90 : 0),
@@ -274,7 +283,7 @@ export const postMessage = (channelId: string, text: string) => {
   if (!trimmed) return
   say(channelId, CEO_ID, trimmed)
   markRead(channelId)
-  enqueue(() => respond(channelId, trimmed))
+  void enqueue(() => respond(channelId, trimmed))
 }
 
 const ensureDeptChannel = (dept: Dept) =>
@@ -384,9 +393,7 @@ const fillDelegatedReqs = () => {
         people: [...s.people, ...hires],
         channels: [...s.channels, ...hires.map((h) => dmChannel(h, 'dm'))],
         reqs: s.reqs.map((r) =>
-          r.id === req.id
-            ? { ...r, filled: r.filled + n, status: r.filled + n >= r.count ? 'filled' : 'open' }
-            : r,
+          r.id === req.id ? { ...r, filled: r.filled + n, status: r.filled + n >= r.count ? 'filled' : 'open' } : r,
         ),
       }))
       ensureDeptChannel(req.dept)
@@ -412,11 +419,26 @@ const weeklyDigest = (before: Company) => {
   const crossed = (limit: number) =>
     f.runwayMonths !== null && f.runwayMonths < limit && (prev.runwayMonths === null || prev.runwayMonths >= limit)
   if (state.company.cash < 0 && before.cash >= 0) {
-    say('leadership', SYSTEM_ID, 'The company is out of cash. In real life this is where payroll bounces. Cut burn, raise money (edit cash in Company to simulate a round), or reset.', 'system')
+    say(
+      'leadership',
+      SYSTEM_ID,
+      'The company is out of cash. In real life this is where payroll bounces. Cut burn, raise money (edit cash in Company to simulate a round), or reset.',
+      'system',
+    )
   } else if (crossed(3)) {
-    say('leadership', SYSTEM_ID, 'Runway is under 3 months. A fundraise started today would probably not close in time.', 'system')
+    say(
+      'leadership',
+      SYSTEM_ID,
+      'Runway is under 3 months. A fundraise started today would probably not close in time.',
+      'system',
+    )
   } else if (crossed(6)) {
-    say('leadership', SYSTEM_ID, 'Runway is under 6 months. Fundraising usually takes that long, so this is the latest sensible moment to act.', 'system')
+    say(
+      'leadership',
+      SYSTEM_ID,
+      'Runway is under 6 months. Fundraising usually takes that long, so this is the latest sensible moment to act.',
+      'system',
+    )
   }
 }
 
@@ -562,7 +584,8 @@ const sourceCandidates = async (reqId: string) => {
       mock: () => JSON.stringify(fallback()),
     })
     const parsed = extractJson<CandidateDraft[]>(raw)
-    const drafts = Array.isArray(parsed) && parsed.length > 0 && parsed.every((d) => d && d.name) ? parsed.slice(0, 4) : fallback()
+    const drafts =
+      Array.isArray(parsed) && parsed.length > 0 && parsed.every((d) => d && d.name) ? parsed.slice(0, 4) : fallback()
     const current = get().state
     const candidates = drafts.map((d) => ({
       ...draftToCandidate(d, req, current.company.week),
@@ -612,7 +635,7 @@ export const openReq = (form: ReqForm) => {
       : `Opened a role: ${req.title}. Sourcing candidates for you to interview.`,
     'system',
   )
-  if (req.mode === 'direct') enqueue(() => sourceCandidates(req.id))
+  if (req.mode === 'direct') void enqueue(() => sourceCandidates(req.id))
 }
 
 export const moreCandidates = (reqId: string) => enqueue(() => sourceCandidates(reqId))
@@ -671,9 +694,14 @@ export const letGo = (personId: string, note: string) => {
   const text = note.trim()
   if (text) {
     say('general', CEO_ID, text)
-    enqueue(() => respond('general', text))
+    void enqueue(() => respond('general', text))
   } else {
-    say('general', SYSTEM_ID, `${person.name} (${person.title}) has left the company. The CEO made no announcement.`, 'system')
+    say(
+      'general',
+      SYSTEM_ID,
+      `${person.name} (${person.title}) has left the company. The CEO made no announcement.`,
+      'system',
+    )
   }
 }
 
@@ -707,7 +735,7 @@ export const recordDecision = (form: DecisionForm) => {
   const text = `Decision: ${decision.title}\n${decision.decision}${decision.rationale ? `\nWhy: ${decision.rationale}` : ''}`
   say(form.channelId, CEO_ID, text, 'decision', form.scenarioId)
   markRead(form.channelId)
-  enqueue(() => respond(form.channelId, text))
+  void enqueue(() => respond(form.channelId, text))
 }
 
 export const updateSettings = (fn: (settings: Settings) => Settings) =>
@@ -723,13 +751,21 @@ export const openDm = (personId: string) => {
   if (channel) setView({ kind: 'channel', id: channel.id })
 }
 
-export const fetchModels = (provider: RealProvider) => postModels(provider, get().state.settings.providers[provider].key)
+export const fetchModels = (provider: RealProvider) =>
+  postModels(provider, get().state.settings.providers[provider].key)
 
 export const testProvider = async (provider: RealProvider): Promise<string> => {
   const config = get().state.settings.providers[provider]
   try {
     const res = await postChat(
-      { provider, model: config.model, system: 'Reply with one short sentence.', prompt: 'Say hello.', maxTokens: 60, effort: 'low' },
+      {
+        provider,
+        model: config.model,
+        system: 'Reply with one short sentence.',
+        prompt: 'Say hello.',
+        maxTokens: 60,
+        effort: 'low',
+      },
       config.key,
     )
     recordUsage(provider, res)
@@ -741,7 +777,12 @@ export const testProvider = async (provider: RealProvider): Promise<string> => {
 
 export const refreshHealth = async () => {
   const health = await getHealth()
-  updateUi((ui) => ({ ...ui, serverUp: health !== null, serverKeys: health?.serverKeys ?? ui.serverKeys }))
+  updateUi((ui) => ({
+    ...ui,
+    serverUp: health !== null,
+    serverKeys: health?.serverKeys ?? ui.serverKeys,
+    serverVersion: health?.version ?? ui.serverVersion,
+  }))
 }
 
 export const exportState = (): string => {

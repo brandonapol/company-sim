@@ -51,12 +51,12 @@ docker run -p 8787:8787 -e APP_PASSWORD=choose-one company-sim
 
 ### Configuration
 
-| Variable | Purpose |
-| --- | --- |
-| `APP_PASSWORD` | Enables HTTP basic auth. Without it the server only listens on localhost. |
-| `APP_USER` | Basic auth user, default `ceo`. |
-| `PORT`, `HOST` | Default `8787`; host is `0.0.0.0` when a password is set. |
-| `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `XAI_API_KEY` | Optional server-side keys, used when the browser has none. |
+| Variable                                             | Purpose                                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------------------- |
+| `APP_PASSWORD`                                       | Enables HTTP basic auth. Without it the server only listens on localhost. |
+| `APP_USER`                                           | Basic auth user, default `ceo`.                                           |
+| `PORT`, `HOST`                                       | Default `8787`; host is `0.0.0.0` when a password is set.                 |
+| `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `XAI_API_KEY` | Optional server-side keys, used when the browser has none.                |
 
 Basic auth sends the password with every request, so put this behind HTTPS if it leaves your machine.
 

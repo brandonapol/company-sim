@@ -33,8 +33,7 @@ const anthropicChat = async (key: string, req: ChatRequest): Promise<ChatRespons
   const usage = response.usage
   return {
     text: response.stop_reason === 'refusal' && !text ? '(declined to answer this one)' : text,
-    inputTokens:
-      usage.input_tokens + (usage.cache_read_input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0),
+    inputTokens: usage.input_tokens + (usage.cache_read_input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0),
     outputTokens: usage.output_tokens,
   }
 }

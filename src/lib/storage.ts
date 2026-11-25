@@ -6,10 +6,10 @@ const open = (): Promise<IDBDatabase> =>
     const request = indexedDB.open(DB_NAME, 1)
     request.onupgradeneeded = () => request.result.createObjectStore(STORE)
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+    request.onerror = () => reject(request.error ?? new Error('Could not open the browser database'))
   })
 
-const run = async <T,>(mode: IDBTransactionMode, op: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> => {
+const run = async <T>(mode: IDBTransactionMode, op: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> => {
   const db = await open()
   return new Promise<T>((resolve, reject) => {
     const tx = db.transaction(STORE, mode)
@@ -20,11 +20,12 @@ const run = async <T,>(mode: IDBTransactionMode, op: (store: IDBObjectStore) => 
     }
     tx.onerror = () => {
       db.close()
-      reject(tx.error)
+      reject(tx.error ?? new Error('Browser database transaction failed'))
     }
   })
 }
 
-export const loadValue = <T,>(key: string) => run<T | undefined>('readonly', (store) => store.get(key))
+export const loadValue = <T>(key: string) =>
+  run<T | undefined>('readonly', (store) => store.get(key) as IDBRequest<T | undefined>)
 
 export const saveValue = (key: string, value: unknown) => run('readwrite', (store) => store.put(value, key))

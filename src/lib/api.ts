@@ -1,6 +1,6 @@
 import type { ChatRequest, ChatResponse, HealthResponse, ModelsResponse, RealProvider } from '../shared/api.ts'
 
-const post = async <T,>(path: string, body: unknown, key: string): Promise<T> => {
+const post = async <T>(path: string, body: unknown, key: string): Promise<T> => {
   const res = await fetch(path, {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...(key.trim() ? { 'x-llm-key': key.trim() } : {}) },

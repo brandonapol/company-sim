@@ -32,8 +32,7 @@ const channel = (id: string, name: string, topic: string, extra: Partial<Channel
   ...extra,
 })
 
-export const deptChannel = (dept: Dept): Channel =>
-  channel(`dept-${dept}`, dept, `${DEPT_LABEL[dept]} team`, { dept })
+export const deptChannel = (dept: Dept): Channel => channel(`dept-${dept}`, dept, `${DEPT_LABEL[dept]} team`, { dept })
 
 export const dmChannel = (person: Person, kind: 'dm' | 'interview'): Channel =>
   channel(`${kind}-${person.id}`, person.name, person.title, { kind, personId: person.id })
@@ -86,8 +85,8 @@ export const cofounderPerson = (cofounder: Cofounder): Person => ({
   managerId: null,
   salary: cofounder.salary,
   provider: 'mock',
-  persona: PERSONAS[1] as string,
-  quirk: QUIRKS[3] as string,
+  persona: PERSONAS[1],
+  quirk: QUIRKS[3],
   background: 'Co-founder. Has been building the product from day one and knows where every body is buried.',
   strengths: [],
   concerns: [],

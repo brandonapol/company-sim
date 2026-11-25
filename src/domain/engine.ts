@@ -103,9 +103,7 @@ export const nextScenario = (runs: ScenarioRun[], people: Person[], product: str
 export const scenarioRaiser = (scenario: Scenario, people: Person[]): Person | null => {
   const staff = activePeople(people)
   const byRank = (a: Person, b: Person) => LEVEL_RANK[b.level] - LEVEL_RANK[a.level]
-  return (
-    staff.filter((p) => p.dept === scenario.raisedBy).sort(byRank)[0] ?? [...staff].sort(byRank)[0] ?? null
-  )
+  return staff.filter((p) => p.dept === scenario.raisedBy).sort(byRank)[0] ?? [...staff].sort(byRank)[0] ?? null
 }
 
 export const scenarioChannel = (scenario: Scenario, raiser: Person | null, channels: Channel[]): Channel => {
@@ -120,7 +118,9 @@ export const tokensToday = (state: State, now: number): number =>
 export const overBudget = (state: State, now: number) => tokensToday(state, now) >= state.settings.dailyTokenBudget
 
 export const usableProviders = (settings: Settings, serverKeys: Record<RealProvider, boolean>): RealProvider[] =>
-  REAL_PROVIDERS.filter((p) => settings.providers[p].enabled && (settings.providers[p].key.trim() !== '' || serverKeys[p]))
+  REAL_PROVIDERS.filter(
+    (p) => settings.providers[p].enabled && (settings.providers[p].key.trim() !== '' || serverKeys[p]),
+  )
 
 export const resolveProvider = (
   wanted: Provider,

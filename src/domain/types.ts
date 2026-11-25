@@ -3,16 +3,7 @@ import type { RealProvider } from '../shared/api.ts'
 export type Provider = RealProvider | 'mock'
 
 export type Dept =
-  | 'exec'
-  | 'engineering'
-  | 'product'
-  | 'design'
-  | 'marketing'
-  | 'sales'
-  | 'success'
-  | 'people'
-  | 'finance'
-  | 'ops'
+  'exec' | 'engineering' | 'product' | 'design' | 'marketing' | 'sales' | 'success' | 'people' | 'finance' | 'ops'
 
 export type Level = 'ic' | 'senior' | 'lead' | 'manager' | 'director' | 'vp' | 'cxo'
 

@@ -19,6 +19,7 @@ export type ChatResponse = {
 
 export type HealthResponse = {
   ok: true
+  version: string
   serverKeys: Record<RealProvider, boolean>
 }
 

@@ -7,7 +7,7 @@ import { money } from './domain/util.ts'
 import { dismissNotice, runWeek, setView, startCompany, updateSettings } from './state/actions.ts'
 import { get, useStore } from './state/store.ts'
 import type { Ui, View } from './state/store.ts'
-import { Field, NumberInput } from './ui/bits.tsx'
+import { Field, NumberInput, useNow } from './ui/bits.tsx'
 import { ChannelView } from './ui/ChannelView.tsx'
 import { SettingsView } from './ui/SettingsView.tsx'
 import { CompanyView, CurriculumView, DecisionsView, HiringView, MentorView, PeopleView } from './ui/Views.tsx'
@@ -37,8 +37,8 @@ const Onboarding = () => {
         <h1>Company Sim</h1>
         <p className="muted">
           Practice being CEO as your company grows from 2 people to 500. Your employees are AI agents with their own
-          priorities, a mentor reads everything and tells you how you are doing, and the curriculum walks you through the
-          decisions that show up at each size. Everything is stored in this browser.
+          priorities, a mentor reads everything and tells you how you are doing, and the curriculum walks you through
+          the decisions that show up at each size. Everything is stored in this browser.
         </p>
         <div className="grid2">
           <Field label="Your name">
@@ -171,7 +171,9 @@ const Sidebar = ({ state, ui }: { state: State; ui: Ui }) => {
         {shownDms.map((c) => (
           <ChannelLink key={c.id} channel={c} state={state} ui={ui} prefix="@" />
         ))}
-        {dms.length > shownDms.length ? <div className="side-more">{dms.length - shownDms.length} more in People</div> : null}
+        {dms.length > shownDms.length ? (
+          <div className="side-more">{dms.length - shownDms.length} more in People</div>
+        ) : null}
       </nav>
     </aside>
   )
@@ -180,7 +182,8 @@ const Sidebar = ({ state, ui }: { state: State; ui: Ui }) => {
 const TopBar = ({ state, ui }: { state: State; ui: Ui }) => {
   const f = finance(state.company, state.people)
   const stage = stageForHeadcount(f.headcount)
-  const used = tokensToday(state, Date.now())
+  const now = useNow()
+  const used = tokensToday(state, now)
   const budget = state.settings.dailyTokenBudget
   const pct = Math.min(100, Math.round((used / Math.max(budget, 1)) * 100))
   return (
@@ -193,8 +196,13 @@ const TopBar = ({ state, ui }: { state: State; ui: Ui }) => {
           {stage.name} stage, {f.headcount} people
         </span>
         <span className={`stat ${state.company.cash < 0 ? 'bad' : ''}`}>Cash {money(state.company.cash)}</span>
-        <span className={`stat ${f.runwayMonths !== null && f.runwayMonths < 6 ? 'bad' : ''}`}>Runway {runwayLabel(f)}</span>
-        <span className="stat tokens" title={`${used.toLocaleString()} of ${budget.toLocaleString()} tokens used today`}>
+        <span className={`stat ${f.runwayMonths !== null && f.runwayMonths < 6 ? 'bad' : ''}`}>
+          Runway {runwayLabel(f)}
+        </span>
+        <span
+          className="stat tokens"
+          title={`${used.toLocaleString()} of ${budget.toLocaleString()} tokens used today`}
+        >
           Tokens today
           <span className="meter">
             <span className={pct >= 100 ? 'full' : ''} style={{ width: `${pct}%` }} />

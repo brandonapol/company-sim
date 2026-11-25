@@ -10,15 +10,7 @@ export type Stage = {
 }
 
 export type Topic =
-  | 'Strategy'
-  | 'Marketing'
-  | 'Sales'
-  | 'Finance'
-  | 'People'
-  | 'Org design'
-  | 'Leadership'
-  | 'Operations'
-  | 'Governance'
+  'Strategy' | 'Marketing' | 'Sales' | 'Finance' | 'People' | 'Org design' | 'Leadership' | 'Operations' | 'Governance'
 
 export type Scenario = {
   id: string
@@ -56,7 +48,8 @@ export const STAGES: Stage[] = [
     min: 26,
     max: 50,
     theme: 'Managing managers',
-    ceoJob: 'Design the org, hire executives, and make culture explicit because you can no longer transmit it in person.',
+    ceoJob:
+      'Design the org, hire executives, and make culture explicit because you can no longer transmit it in person.',
   },
   {
     index: 3,
@@ -77,7 +70,7 @@ export const STAGES: Stage[] = [
 ]
 
 export const stageForHeadcount = (headcount: number): Stage =>
-  STAGES.find((stage) => headcount <= stage.max) ?? (STAGES[STAGES.length - 1] as Stage)
+  STAGES.find((stage) => headcount <= stage.max) ?? STAGES[STAGES.length - 1]
 
 export const SCENARIOS: Scenario[] = [
   {
@@ -90,7 +83,12 @@ export const SCENARIOS: Scenario[] = [
       'We keep saying we need "a marketing person" for {product}. Before anyone writes a job post: what is the actual job? Demand gen, content, product marketing, brand, community? Generalist or specialist, full-time or contractor? What would they own in their first 90 days and how would we know it is working?',
     primer:
       'Hire for the bottleneck, not the title. Write the outcomes you need in 30/60/90 days first (a scorecard), then derive the role and level from it. Early on a scrappy generalist who can run experiments usually beats a senior specialist who needs a team and a budget, and a contractor can de-risk the bet before you commit salary and equity.',
-    frameworks: ['Role scorecard (the "Who" method)', 'Funnel bottleneck analysis', 'Generalist vs specialist by stage', 'Contract-to-hire'],
+    frameworks: [
+      'Role scorecard (the "Who" method)',
+      'Funnel bottleneck analysis',
+      'Generalist vs specialist by stage',
+      'Contract-to-hire',
+    ],
     rubric:
       'Names the specific funnel bottleneck the hire fixes, defines measurable 90-day outcomes, picks a level and cost that fit the runway, and says what the founders will stop doing as a result.',
   },
@@ -104,7 +102,12 @@ export const SCENARIOS: Scenario[] = [
       'Honest question: if I had to describe the one customer {product} is perfect for, I could not do it in a sentence, and I do not think you would say the same sentence I would. Every prospect call we pitch it differently. Can we pick who we are for and, just as important, who we are not for right now?',
     primer:
       'Positioning is a choice about which customers you win by default. Define an ideal customer profile narrow enough that a salesperson could build a list from it, state the alternative they use today, and the one thing you do better for them. A beachhead you can dominate beats a big market you nibble at.',
-    frameworks: ['Ideal customer profile (ICP)', 'Jobs to be done', 'April Dunford positioning', 'Beachhead market (Crossing the Chasm)'],
+    frameworks: [
+      'Ideal customer profile (ICP)',
+      'Jobs to be done',
+      'April Dunford positioning',
+      'Beachhead market (Crossing the Chasm)',
+    ],
     rubric:
       'Commits to a specific segment and explicitly excludes others, names the competitive alternative and the differentiated value, and accepts the trade-off instead of keeping every option open.',
   },
@@ -134,7 +137,12 @@ export const SCENARIOS: Scenario[] = [
       'Our pitch is "buy the hardware once, no subscriptions". I love it and it worries me. Every customer costs us support, updates and app-store upkeep forever, and pays us once. The software is MIT-0, so anyone can run it on their own box and pay us nothing. Before we hire anyone on the back of this, what is the revenue model that funds a company and does not break the promise?',
     primer:
       'A one-time sale has to cover a lifetime of cost to serve, so hardware margin and repeat purchase matter far more than in subscription software. Options that keep the promise include healthy gross margin on the device, upgrades and accessories (drives, a second unit for off-site backup), optional paid services that are truly optional (encrypted off-site backup, managed remote access), and paid support or setup. Know your contribution margin per unit before you scale marketing.',
-    frameworks: ['Unit economics and contribution margin', 'Lifetime cost to serve', 'Open-core and optional services', 'Razor-and-blades vs one-time sale'],
+    frameworks: [
+      'Unit economics and contribution margin',
+      'Lifetime cost to serve',
+      'Open-core and optional services',
+      'Razor-and-blades vs one-time sale',
+    ],
     rubric:
       'Works from per-unit numbers (price, cost of goods, cost to serve), picks a model consistent with the no-subscription promise or changes the promise deliberately, addresses the open-source free-rider question, and identifies what must be measured next.',
   },
@@ -148,7 +156,12 @@ export const SCENARIOS: Scenario[] = [
       'We set the {product} price by gut feel and have never revisited it. Two prospects this month said yes without blinking, which usually means we are too cheap. What do we charge for, how do we package it, and are we willing to lose some deals to find out?',
     primer:
       'Price on a value metric that grows as the customer gets more value (seats, usage, outcomes), not on your costs. Good-better-best packaging lets customers self-select. Test willingness to pay by actually quoting higher prices. Price is the fastest lever on unit economics and the one founders touch least.',
-    frameworks: ['Value metric', 'Good-better-best packaging', 'Van Westendorp price sensitivity', 'Gross margin and unit economics'],
+    frameworks: [
+      'Value metric',
+      'Good-better-best packaging',
+      'Van Westendorp price sensitivity',
+      'Gross margin and unit economics',
+    ],
     rubric:
       'Chooses a value metric with reasoning, proposes a concrete test rather than a debate, considers existing customers and gross margin, and sets a date to review the result.',
   },
@@ -177,9 +190,14 @@ export const SCENARIOS: Scenario[] = [
       'The supplier wants a commitment. Per-unit cost drops a lot at the bigger order size, but that ties up a big slice of our cash in boxes for months before a single one sells, and we would be storing, flashing and shipping them ourselves. Small batch at worse margin, big batch on a guess, or take pre-orders first? I need a number from you.',
     primer:
       'Hardware companies die of cash, not of margin: money leaves when you order and returns when customers pay, and the gap is your cash conversion cycle. Pre-orders or crowdfunding turn customers into your financing and validate demand, at the price of delivery promises you must keep. Size the first batch from evidence of demand, and price in returns, warranty and dead-on-arrival units.',
-    frameworks: ['Cash conversion cycle', 'Minimum order quantity and bill of materials', 'Pre-orders as demand validation', 'Warranty and returns reserve'],
+    frameworks: [
+      'Cash conversion cycle',
+      'Minimum order quantity and bill of materials',
+      'Pre-orders as demand validation',
+      'Warranty and returns reserve',
+    ],
     rubric:
-      'Sizes the order from demand evidence and runway rather than unit cost alone, considers pre-orders to shift cash timing, accounts for fulfilment, warranty and support load, and states the downside case if units do not sell.',
+      'Sizes the order from demand evidence and runway rather than unit cost alone, considers pre-orders to shift cash timing, accounts for fulfillment, warranty and support load, and states the downside case if units do not sell.',
   },
   {
     id: 'cofounder-roles',
@@ -191,7 +209,12 @@ export const SCENARIOS: Scenario[] = [
       'Can we talk about how you and I make decisions? Last week we both gave a contractor different direction on the same thing. As we add people that gets expensive. I would like us to write down who owns which calls, and what happens when we disagree.',
     primer:
       'Cofounder ambiguity is cheap at two people and corrosive at ten. Assign a single directly responsible individual to each domain, agree which decisions need both of you, and decide in advance how ties break. Discuss it while things are calm.',
-    frameworks: ['Directly responsible individual (DRI)', 'RACI / decision rights', 'Type 1 vs Type 2 decisions', 'Disagree and commit'],
+    frameworks: [
+      'Directly responsible individual (DRI)',
+      'RACI / decision rights',
+      'Type 1 vs Type 2 decisions',
+      'Disagree and commit',
+    ],
     rubric:
       'Gives clear ownership by domain, defines a tie-break, handles the conversation with respect rather than defensiveness, and makes it visible to the rest of the team.',
   },
@@ -205,7 +228,12 @@ export const SCENARIOS: Scenario[] = [
       'A prospect would become our largest customer by far, maybe a third of revenue, but only if we build a custom integration and a couple of features only they need. It would take roughly two months of engineering. Do we take it?',
     primer:
       'Large early customers validate you and can also turn you into their outsourced dev shop. Weigh revenue concentration, whether the work generalizes to your ICP, and what it displaces on the roadmap. You can often reshape the deal: charge for the work, make it a design partnership, or build the generalizable 60 percent.',
-    frameworks: ['Revenue concentration risk', 'Product vs services revenue', 'Opportunity cost', 'Design partner agreements'],
+    frameworks: [
+      'Revenue concentration risk',
+      'Product vs services revenue',
+      'Opportunity cost',
+      'Design partner agreements',
+    ],
     rubric:
       'Evaluates fit with the chosen ICP and roadmap cost, proposes terms rather than a plain yes or no, and considers concentration risk and what the team is told.',
   },
@@ -216,10 +244,15 @@ export const SCENARIOS: Scenario[] = [
     title: 'Your first manager: promote or hire?',
     raisedBy: 'engineering',
     kickoff:
-      'The team has grown to the point where you cannot be everyone\'s manager anymore, and 1:1s are slipping. Do we promote our strongest individual contributor into the manager job, or hire an experienced manager from outside? People are already speculating.',
+      "The team has grown to the point where you cannot be everyone's manager anymore, and 1:1s are slipping. Do we promote our strongest individual contributor into the manager job, or hire an experienced manager from outside? People are already speculating.",
     primer:
-      'Management is a different job, not a promotion for being great at the old one. A manager\'s output is the output of their team. Promoting from within keeps context and trust but risks losing your best IC and gaining a mediocre manager; hiring outside brings skill but risks rejection by the team. Either way, offer a real IC growth track so management is not the only way up.',
-    frameworks: ['High Output Management (manager leverage)', 'Peter principle', 'Dual career ladders', 'Span of control (5-8)'],
+      "Management is a different job, not a promotion for being great at the old one. A manager's output is the output of their team. Promoting from within keeps context and trust but risks losing your best IC and gaining a mediocre manager; hiring outside brings skill but risks rejection by the team. Either way, offer a real IC growth track so management is not the only way up.",
+    frameworks: [
+      'High Output Management (manager leverage)',
+      'Peter principle',
+      'Dual career ladders',
+      'Span of control (5-8)',
+    ],
     rubric:
       'Treats management as a distinct skill, checks whether the candidate wants it, defines the role and support, protects an IC track, and plans how the choice is communicated.',
   },
@@ -233,7 +266,12 @@ export const SCENARIOS: Scenario[] = [
       'This is awkward to raise. One of our earliest people, someone everyone likes, has been missing commitments for a couple of months and others are quietly covering. Nobody has said anything to them directly. What do you want to do?',
     primer:
       'Delay is the most common failure: the team already knows, and your inaction tells them what standards really are. Give direct, specific feedback with clear expectations and a timeframe, look honestly for a role that fits, and if it does not work, part ways generously and quickly. Fair process matters as much to the people watching as to the person involved.',
-    frameworks: ['Situation-Behavior-Impact feedback', 'Radical Candor', 'Performance improvement plan', 'Fair process'],
+    frameworks: [
+      'Situation-Behavior-Impact feedback',
+      'Radical Candor',
+      'Performance improvement plan',
+      'Fair process',
+    ],
     rubric:
       'Commits to a direct conversation soon, with specific examples and a clear expectation and timeline, considers role fit and generosity, and recognizes the message inaction sends to the team.',
   },
@@ -261,7 +299,12 @@ export const SCENARIOS: Scenario[] = [
       'One of our strongest engineers told me they have an offer for about 30 percent more. They would rather stay but feel underpaid. If we match it, word will get around. If we do not, we may lose them at a bad time. What is our answer?',
     primer:
       'One-off counteroffers buy a few months and teach everyone that the way to get a raise is to interview. Decide a compensation philosophy (which market percentile, how equity fits), build simple bands by level, and fix people who are genuinely out of band. Then ask why they were looking; it is rarely only money.',
-    frameworks: ['Compensation philosophy and bands', 'Pay equity', 'Total compensation (cash + equity)', 'Stay interviews'],
+    frameworks: [
+      'Compensation philosophy and bands',
+      'Pay equity',
+      'Total compensation (cash + equity)',
+      'Stay interviews',
+    ],
     rubric:
       'Separates the individual case from the systemic one, avoids a panicked match that sets a precedent, proposes bands or a philosophy, and explores the non-money reasons.',
   },
@@ -291,7 +334,7 @@ export const SCENARIOS: Scenario[] = [
       'Communication does not scale by osmosis past about ten people. Build a small operating cadence: weekly 1:1s, a weekly leadership meeting with a fixed agenda, a regular all-hands, and written decisions that state what, why and who owns it. Repeat the strategy until you are sick of it; that is about when people start hearing it.',
     frameworks: ['Operating cadence', '1:1s', 'Decision logs / written culture', 'All-hands and AMAs'],
     rubric:
-      'Designs a lightweight cadence rather than many meetings, commits to written decisions, clarifies who communicates what, and sees repetition as the CEO\'s job.',
+      "Designs a lightweight cadence rather than many meetings, commits to written decisions, clarifies who communicates what, and sees repetition as the CEO's job.",
   },
   {
     id: 'quark-support-load',
@@ -304,7 +347,12 @@ export const SCENARIOS: Scenario[] = [
       'Support volume doubled with the last batch of {product} units. Most tickets are home-network problems, drives people plugged in, and "where did my photos go". Engineers are answering them because nobody else can, and a couple of angry posts are sitting on the self-hosting forums. People store their only copy of family photos on this thing. What is our support model, and what do we promise?',
     primer:
       'For a product that holds irreplaceable data, support and reliability are the brand. Tier support so engineers only see what needs an engineer, fix the top ticket drivers in the product (the cheapest ticket is the one never filed), publish what you do and do not promise, and treat community forums as a channel you staff on purpose. Track contact rate per unit and cost per ticket, because both come straight out of a one-time sale.',
-    frameworks: ['Tiered support', 'Contact rate and cost to serve', 'Pareto analysis of ticket drivers', 'Community-led support'],
+    frameworks: [
+      'Tiered support',
+      'Contact rate and cost to serve',
+      'Pareto analysis of ticket drivers',
+      'Community-led support',
+    ],
     rubric:
       'Protects engineering time with a clear tiering and ownership, attacks root causes in the product, sets an explicit promise about data safety and response times, and connects support cost back to unit economics.',
   },
@@ -318,9 +366,14 @@ export const SCENARIOS: Scenario[] = [
       'You currently have more direct reports than anyone can manage well, and three of them have said they do not get enough of your time. We need an actual org structure. Who reports to you, which functions need a leader, and which leaders do we already have versus need to hire?',
     primer:
       'Structure follows strategy: organize around what the company most needs to be good at. Most companies at this size are functional. Keep your span to about five to eight, be clear whether each leader is a stretch promotion or a hire, and accept that every structure has a cost you must manage on purpose.',
-    frameworks: ['Functional vs divisional structure', 'Span of control', 'Structure follows strategy', 'Stretch promotion vs external hire'],
+    frameworks: [
+      'Functional vs divisional structure',
+      'Span of control',
+      'Structure follows strategy',
+      'Stretch promotion vs external hire',
+    ],
     rubric:
-      'Produces a concrete structure tied to strategy, reduces the CEO\'s span, is honest about which leaders are ready, and plans the conversations with people who gain a boss.',
+      "Produces a concrete structure tied to strategy, reduces the CEO's span, is honest about which leaders are ready, and plans the conversations with people who gain a boss.",
   },
   {
     id: 'hire-executive',
@@ -346,7 +399,12 @@ export const SCENARIOS: Scenario[] = [
       'Our top performer by output is also the person three colleagues have now complained about: dismissive in reviews, takes credit, people avoid working with them. Their manager is afraid to act because the numbers are so good. Our stated values say we care about how people work together. Do they?',
     primer:
       'Culture is what you tolerate and whom you promote, not what is on the wall. Values only become real when they cost you something. Give the person clear feedback and a short window to change, and be prepared to act; keeping them tells everyone else that results excuse behavior.',
-    frameworks: ['Values as hiring and firing criteria', 'Performance x values matrix', 'Psychological safety', 'The No Asshole Rule'],
+    frameworks: [
+      'Values as hiring and firing criteria',
+      'Performance x values matrix',
+      'Psychological safety',
+      'The No Asshole Rule',
+    ],
     rubric:
       'Treats behavior as a performance issue, gives direct feedback with consequences, supports the manager, and is willing to lose the individual to protect the standard.',
   },
@@ -360,7 +418,12 @@ export const SCENARIOS: Scenario[] = [
       'On current burn we should either raise in the next two quarters or change the plan. Investors will ask what the money is for and what it gets us to. What is our story, how much do we raise, and how much of the company are we willing to sell?',
     primer:
       'Raise for 18 to 24 months to reach milestones that justify the next round. Investors buy a narrative backed by metrics: growth, retention, efficiency. Typical priced rounds sell 15 to 25 percent. Run a tight parallel process, know your walk-away terms, and remember a board seat is a long relationship.',
-    frameworks: ['Use of funds and milestones', 'Dilution and the cap table', 'Retention and net revenue retention', 'Running a fundraising process'],
+    frameworks: [
+      'Use of funds and milestones',
+      'Dilution and the cap table',
+      'Retention and net revenue retention',
+      'Running a fundraising process',
+    ],
     rubric:
       'States a clear narrative with milestones, sizes the round from a plan rather than a wish, understands dilution and control trade-offs, and has a plan B if the raise is slow.',
   },
@@ -374,7 +437,12 @@ export const SCENARIOS: Scenario[] = [
       'We had our third customer-facing incident this month, and each one traced back to nobody clearly owning a handoff. Half the team wants proper process. The other half says process is how startups die. Where do you land?',
     primer:
       'Process is a response to a recurring, expensive problem; add the minimum that prevents the repeat. Give every recurring thing an owner, run blameless postmortems that produce one or two fixes, and prune process regularly. The goal is to keep speed as you grow.',
-    frameworks: ['Blameless postmortems', 'DRIs and ownership', 'Minimum viable process', 'Leading vs lagging indicators'],
+    frameworks: [
+      'Blameless postmortems',
+      'DRIs and ownership',
+      'Minimum viable process',
+      'Leading vs lagging indicators',
+    ],
     rubric:
       'Avoids both extremes, targets process at the specific failure, assigns ownership, and installs a learning loop rather than blame.',
   },
@@ -416,7 +484,12 @@ export const SCENARIOS: Scenario[] = [
       'Sales is promising features to close enterprise deals and escalating to you when product says no. Product says the roadmap is being run by whoever shouted last. Both leaders have asked you to back them. This is now leaking to their teams.',
     primer:
       'Recurring conflict between good executives is usually a strategy or decision-rights gap, not a personality problem. Make the strategic trade-off explicit (which segment, how much roadmap capacity is reserved for deals), define who decides, and require the exec team to act as one team first and function heads second.',
-    frameworks: ['Decision rights', 'First-team principle (Lencioni)', 'Strategy as tie-breaker', 'Disagree and commit'],
+    frameworks: [
+      'Decision rights',
+      'First-team principle (Lencioni)',
+      'Strategy as tie-breaker',
+      'Disagree and commit',
+    ],
     rubric:
       'Diagnoses the structural cause, makes the underlying strategic call, sets a clear decision mechanism, and holds both leaders to first-team behavior instead of picking a winner.',
   },
@@ -424,13 +497,18 @@ export const SCENARIOS: Scenario[] = [
     id: 'manager-quality',
     stage: 3,
     topic: 'People',
-    title: 'One department\'s engagement scores are terrible',
+    title: "One department's engagement scores are terrible",
     raisedBy: 'people',
     kickoff:
-      'The engagement survey is in. One director\'s org is far below the rest and has lost four people in a quarter. The director delivers results and reports to an exec who says everything is fine. You are two levels away from it. What do you do?',
+      "The engagement survey is in. One director's org is far below the rest and has lost four people in a quarter. The director delivers results and reports to an exec who says everything is fine. You are two levels away from it. What do you do?",
     primer:
       'At this size you manage through managers, so manager quality is your product. Use skip-level meetings to stay connected to reality, hold executives accountable for the health of their orgs as well as output, and invest in manager training and calibration. Intervene through the chain when you can, around it when you must.',
-    frameworks: ['Skip-level meetings', 'Manager training and expectations', 'Performance calibration', 'Regretted attrition'],
+    frameworks: [
+      'Skip-level meetings',
+      'Manager training and expectations',
+      'Performance calibration',
+      'Regretted attrition',
+    ],
     rubric:
       'Gathers first-hand information without undermining the exec, holds the exec accountable, sets expectations for managers, and addresses the system as well as the individual.',
   },
@@ -474,7 +552,7 @@ export const SCENARIOS: Scenario[] = [
       'You have a duty to consider serious offers and to shareholders as a whole. Compare the offer to a risk-adjusted view of the standalone plan, understand your alternatives, and remember that a process distracts the company and leaks. The best negotiating position is a business that does not need to sell.',
     frameworks: ['BATNA', 'Risk-adjusted valuation', 'Fiduciary duty', 'Strategic alternatives process'],
     rubric:
-      'Weighs the offer against a realistic standalone case, considers all stakeholders and the board\'s role, controls information, and reaches a reasoned recommendation rather than an emotional one.',
+      "Weighs the offer against a realistic standalone case, considers all stakeholders and the board's role, controls information, and reaches a reasoned recommendation rather than an emotional one.",
   },
   {
     id: 'ceo-time',
@@ -485,7 +563,7 @@ export const SCENARIOS: Scenario[] = [
     kickoff:
       'I audited your calendar for the last month. About 70 percent is recurring meetings and escalations. You spent almost no time with customers, on recruiting senior people, or thinking about next year. What should your job actually be now?',
     primer:
-      'At scale the CEO\'s unique jobs are few: set and communicate strategy, allocate capital and people, build the executive team, shape culture, and represent the company outside. Everything else should be delegated with clear outcomes. Audit your calendar against those jobs and delete or delegate the rest.',
+      "At scale the CEO's unique jobs are few: set and communicate strategy, allocate capital and people, build the executive team, shape culture, and represent the company outside. Everything else should be delegated with clear outcomes. Audit your calendar against those jobs and delete or delegate the rest.",
     frameworks: ['CEO job description', 'Delegation levels', 'Calendar audit', 'Chief of staff role'],
     rubric:
       'Names the few things only the CEO should do, makes specific delegation decisions with owners, changes the calendar, and resists holding on to comfortable operational work.',
@@ -497,12 +575,17 @@ export const SCENARIOS: Scenario[] = [
     title: 'A serious complaint about a senior leader',
     raisedBy: 'people',
     kickoff:
-      'We have received a formal complaint about a senior leader\'s conduct toward someone on their team. The leader is important to a critical project and is a friend of several executives. What happens next, and who needs to know?',
+      "We have received a formal complaint about a senior leader's conduct toward someone on their team. The leader is important to a critical project and is a friend of several executives. What happens next, and who needs to know?",
     primer:
       'This is where process protects everyone: follow a consistent, confidential, impartial investigation with legal counsel, protect the complainant from retaliation, and do not prejudge the outcome in either direction. Seniority must not change the process. How you handle it defines whether people believe it is safe to speak up.',
-    frameworks: ['Impartial investigation process', 'Non-retaliation', 'Legal counsel and documentation', 'Need-to-know confidentiality'],
+    frameworks: [
+      'Impartial investigation process',
+      'Non-retaliation',
+      'Legal counsel and documentation',
+      'Need-to-know confidentiality',
+    ],
     rubric:
-      'Insists on an impartial process with counsel, protects the complainant, limits information to those who need it, and refuses to let the leader\'s importance alter the handling.',
+      "Insists on an impartial process with counsel, protects the complainant, limits information to those who need it, and refuses to let the leader's importance alter the handling.",
   },
   {
     id: 'annual-planning',

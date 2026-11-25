@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { CEO_ID, MENTOR_ID, SYSTEM_ID } from '../domain/types.ts'
 import type { State } from '../domain/types.ts'
 
-const hue = (id: string) => [...id].reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) % 360, 7)
+const hue = (id: string) => Array.from(id).reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) % 360, 7)
 
 const initials = (name: string) =>
   name
@@ -11,6 +12,8 @@ const initials = (name: string) =>
     .map((part) => part[0] ?? '')
     .join('')
     .toUpperCase()
+
+export const useNow = () => useState(() => Date.now())[0]
 
 export const authorName = (state: State, authorId: string) => {
   if (authorId === CEO_ID) return state.company.ceoName || 'You'

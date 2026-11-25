@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { ACTIVITY_LABEL, REPLIES_PER_POST, UNPROMPTED_PER_WEEK, tokensToday } from '../domain/engine.ts'
 import type { Activity, State } from '../domain/types.ts'
-import { exportState, fetchModels, importState, refreshHealth, resetAll, testProvider, updateSettings } from '../state/actions.ts'
+import {
+  exportState,
+  fetchModels,
+  importState,
+  refreshHealth,
+  resetAll,
+  testProvider,
+  updateSettings,
+} from '../state/actions.ts'
 import type { Ui } from '../state/store.ts'
 import { REAL_PROVIDERS } from '../shared/api.ts'
 import type { RealProvider } from '../shared/api.ts'
-import { Field, NumberInput } from './bits.tsx'
+import { Field, NumberInput, useNow } from './bits.tsx'
 
 const PROVIDER_LABEL: Record<RealProvider, string> = {
   anthropic: 'Claude (Anthropic)',
@@ -25,12 +33,17 @@ const ProviderCard = ({ provider, state, ui }: { provider: RealProvider; state: 
       <div className="row between">
         <h3>{PROVIDER_LABEL[provider]}</h3>
         <label className="check">
-          <input type="checkbox" checked={config.enabled} onChange={(e) => set({ enabled: e.target.checked })} /> Enabled
+          <input type="checkbox" checked={config.enabled} onChange={(e) => set({ enabled: e.target.checked })} />{' '}
+          Enabled
         </label>
       </div>
       <Field
         label="API key"
-        hint={ui.serverKeys[provider] ? 'The server also has a key for this provider; leave blank to use it.' : 'Kept in this browser only and sent to your own server with each request.'}
+        hint={
+          ui.serverKeys[provider]
+            ? 'The server also has a key for this provider; leave blank to use it.'
+            : 'Kept in this browser only and sent to your own server with each request.'
+        }
       >
         <input type="password" value={config.key} autoComplete="off" onChange={(e) => set({ key: e.target.value })} />
       </Field>
@@ -104,6 +117,7 @@ const UsageTable = ({ state }: { state: State }) => {
 
 export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
   const s = state.settings
+  const now = useNow()
   const [importStatus, setImportStatus] = useState('')
   const download = () => {
     const url = URL.createObjectURL(new Blob([exportState()], { type: 'application/json' }))
@@ -115,7 +129,7 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
   }
   return (
     <div className="page">
-      <h2>Settings</h2>
+      <h2>Settings {ui.serverVersion ? <span className="muted">version {ui.serverVersion}</span> : null}</h2>
       <div className="card">
         <h3>Noise and pace</h3>
         <p className="muted">
@@ -123,7 +137,10 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
           and a week only runs when you press the button, unless you turn on auto-advance below.
         </p>
         <Field label="How much the bots talk">
-          <select value={s.activity} onChange={(e) => updateSettings((x) => ({ ...x, activity: e.target.value as Activity }))}>
+          <select
+            value={s.activity}
+            onChange={(e) => updateSettings((x) => ({ ...x, activity: e.target.value as Activity }))}
+          >
             {(Object.keys(ACTIVITY_LABEL) as Activity[]).map((a) => (
               <option key={a} value={a}>
                 {ACTIVITY_LABEL[a]}
@@ -133,28 +150,57 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
         </Field>
         <p className="hint">
           At this level: up to {REPLIES_PER_POST[s.activity]} replies each time you post in a channel, and{' '}
-          {UNPROMPTED_PER_WEEK[s.activity]} unprompted messages per simulated week. DMs and @mentions always get an answer.
+          {UNPROMPTED_PER_WEEK[s.activity]} unprompted messages per simulated week. DMs and @mentions always get an
+          answer.
         </p>
         <div className="grid3">
-          <Field label="Daily token budget" hint={`Hard stop. Used today: ${tokensToday(state, Date.now()).toLocaleString()}.`}>
-            <NumberInput value={s.dailyTokenBudget} step={10_000} onChange={(v) => updateSettings((x) => ({ ...x, dailyTokenBudget: v }))} />
+          <Field
+            label="Daily token budget"
+            hint={`Hard stop. Used today: ${tokensToday(state, now).toLocaleString()}.`}
+          >
+            <NumberInput
+              value={s.dailyTokenBudget}
+              step={10_000}
+              onChange={(v) => updateSettings((x) => ({ ...x, dailyTokenBudget: v }))}
+            />
           </Field>
           <Field label="Reply length (words)" hint="Shorter replies cost less.">
-            <NumberInput value={s.replyWords} min={20} step={10} onChange={(v) => updateSettings((x) => ({ ...x, replyWords: v }))} />
+            <NumberInput
+              value={s.replyWords}
+              min={20}
+              step={10}
+              onChange={(v) => updateSettings((x) => ({ ...x, replyWords: v }))}
+            />
           </Field>
           <Field label="Messages of context per reply" hint="How much channel history each bot reads.">
-            <NumberInput value={s.contextMessages} min={2} onChange={(v) => updateSettings((x) => ({ ...x, contextMessages: v }))} />
+            <NumberInput
+              value={s.contextMessages}
+              min={2}
+              onChange={(v) => updateSettings((x) => ({ ...x, contextMessages: v }))}
+            />
           </Field>
         </div>
         <div className="grid3">
-          <Field label="Auto-run a week every N hours" hint="0 = never (manual only). Only runs while this tab is open.">
-            <NumberInput value={s.autoAdvanceHours} onChange={(v) => updateSettings((x) => ({ ...x, autoAdvanceHours: v }))} />
+          <Field
+            label="Auto-run a week every N hours"
+            hint="0 = never (manual only). Only runs while this tab is open."
+          >
+            <NumberInput
+              value={s.autoAdvanceHours}
+              onChange={(v) => updateSettings((x) => ({ ...x, autoAdvanceHours: v }))}
+            />
           </Field>
           <Field label="Quiet hours start (0-23)" hint="Auto-run never fires during quiet hours.">
-            <NumberInput value={s.quietStart} onChange={(v) => updateSettings((x) => ({ ...x, quietStart: Math.min(v, 23) }))} />
+            <NumberInput
+              value={s.quietStart}
+              onChange={(v) => updateSettings((x) => ({ ...x, quietStart: Math.min(v, 23) }))}
+            />
           </Field>
           <Field label="Quiet hours end (0-23)">
-            <NumberInput value={s.quietEnd} onChange={(v) => updateSettings((x) => ({ ...x, quietEnd: Math.min(v, 23) }))} />
+            <NumberInput
+              value={s.quietEnd}
+              onChange={(v) => updateSettings((x) => ({ ...x, quietEnd: Math.min(v, 23) }))}
+            />
           </Field>
         </div>
         <label className="check">
@@ -173,7 +219,9 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
           <Field label="Provider">
             <select
               value={s.mentor.provider}
-              onChange={(e) => updateSettings((x) => ({ ...x, mentor: { ...x.mentor, provider: e.target.value as RealProvider } }))}
+              onChange={(e) =>
+                updateSettings((x) => ({ ...x, mentor: { ...x.mentor, provider: e.target.value as RealProvider } }))
+              }
             >
               {REAL_PROVIDERS.map((p) => (
                 <option key={p} value={p}>
@@ -183,11 +231,18 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
             </select>
           </Field>
           <Field label="Model" hint="Worth using a strong model here; reviews are infrequent.">
-            <input value={s.mentor.model} onChange={(e) => updateSettings((x) => ({ ...x, mentor: { ...x.mentor, model: e.target.value } }))} />
+            <input
+              value={s.mentor.model}
+              onChange={(e) => updateSettings((x) => ({ ...x, mentor: { ...x.mentor, model: e.target.value } }))}
+            />
           </Field>
         </div>
         <label className="check">
-          <input type="checkbox" checked={s.autoReview} onChange={(e) => updateSettings((x) => ({ ...x, autoReview: e.target.checked }))} />{' '}
+          <input
+            type="checkbox"
+            checked={s.autoReview}
+            onChange={(e) => updateSettings((x) => ({ ...x, autoReview: e.target.checked }))}
+          />{' '}
           Write a review automatically at the end of every week
         </label>
       </div>
@@ -225,7 +280,11 @@ export const SettingsView = ({ state, ui }: { state: State; ui: Ui }) => {
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (!file) return
-                void file.text().then((text) => setImportStatus(importState(text) ? 'Imported.' : 'That file is not a Company Sim export.'))
+                void file
+                  .text()
+                  .then((text) =>
+                    setImportStatus(importState(text) ? 'Imported.' : 'That file is not a Company Sim export.'),
+                  )
               }}
             />
           </label>

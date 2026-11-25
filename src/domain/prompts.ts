@@ -106,7 +106,9 @@ export const candidatesPrompt = (state: State, req: Req) =>
     companyBrief(state),
     '',
     `The CEO opened a role: ${req.title} (${LEVEL_LABEL[req.level]}, ${DEPT_LABEL[req.dept]}), budget about ${money(req.salary)} per year.`,
-    req.notes ? `What the CEO says they want: ${req.notes}` : 'The CEO gave no description of what they want from this hire.',
+    req.notes
+      ? `What the CEO says they want: ${req.notes}`
+      : 'The CEO gave no description of what they want from this hire.',
     '',
     'Invent three realistic, clearly different candidates with a real trade-off between them (for example: strong but too senior and expensive, promising but unproven, great on paper with a hidden flaw). None should be an obviously right or wrong choice.',
     'Return only JSON: an array of three objects with keys name (string), background (two sentences), strengths (array of 2-3 short strings), concerns (array of 1-2 short strings an interviewer could see on the resume), hiddenWeakness (one sentence, only discoverable by good interviewing), persona (one sentence on how they communicate), salaryAsk (number, USD per year).',
@@ -123,7 +125,9 @@ export const mentorSystem = (state: State) =>
 export const mentorChatPrompt = (state: State, channel: Channel) => {
   const last = state.reviews[state.reviews.length - 1]
   return [
-    last ? `Your most recent written review (week ${last.week}): ${last.headline} Practice assignment: ${last.practice}` : '',
+    last
+      ? `Your most recent written review (week ${last.week}): ${last.headline} Practice assignment: ${last.practice}`
+      : '',
     'Conversation with the CEO, oldest first:',
     transcript(state, recentMessages(state, channel.id, 16)),
     '',
@@ -139,7 +143,13 @@ export const reviewPrompt = (state: State) => {
   const since = state.lastReviewTs
   const channelName = (id: string) => {
     const c = state.channels.find((ch) => ch.id === id)
-    return c ? (c.kind === 'channel' ? `#${c.name}` : c.kind === 'interview' ? `interview: ${c.name}` : `DM: ${c.name}`) : id
+    return c
+      ? c.kind === 'channel'
+        ? `#${c.name}`
+        : c.kind === 'interview'
+          ? `interview: ${c.name}`
+          : `DM: ${c.name}`
+      : id
   }
   const activity = state.messages
     .filter((m) => m.ts > since && state.channels.find((c) => c.id === m.channelId)?.kind !== 'mentor')
@@ -169,10 +179,14 @@ export const reviewPrompt = (state: State) => {
     .filter(Boolean)
     .join('\n')
   const reqs = state.reqs
-    .map((r) => `- ${r.title} x${r.count} (${r.mode}, ${r.status}, opened week ${r.openedWeek}${r.notes ? `, brief: ${r.notes}` : ', no brief written'})`)
+    .map(
+      (r) =>
+        `- ${r.title} x${r.count} (${r.mode}, ${r.status}, opened week ${r.openedWeek}${r.notes ? `, brief: ${r.notes}` : ', no brief written'})`,
+    )
     .join('\n')
   const stage = stageForHeadcount(headcount(state.people))
-  const upcoming = scenariosFor(state.company.product).filter((s) => s.stage === stage.index && !state.scenarios.some((r) => r.id === s.id))
+  const upcoming = scenariosFor(state.company.product)
+    .filter((s) => s.stage === stage.index && !state.scenarios.some((r) => r.id === s.id))
     .map((s) => s.title)
     .join('; ')
   const previous = state.reviews[state.reviews.length - 1]

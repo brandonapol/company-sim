@@ -2,22 +2,23 @@ export const uid = () => crypto.randomUUID().replace(/-/g, '').slice(0, 10)
 
 export type Rng = () => number
 
-export const pick = <T,>(items: readonly T[], rng: Rng): T => items[Math.floor(rng() * items.length)] as T
+export const pick = <T>(items: readonly T[], rng: Rng): T => items[Math.floor(rng() * items.length)]
 
-export const sampleWeighted = <T,>(items: readonly T[], weight: (item: T) => number, count: number, rng: Rng): T[] => {
+export const sampleWeighted = <T>(items: readonly T[], weight: (item: T) => number, count: number, rng: Rng): T[] => {
   const go = (pool: readonly T[], left: number, acc: T[]): T[] => {
     if (left <= 0 || pool.length === 0) return acc
     const weights = pool.map((item) => Math.max(weight(item), 0.0001))
     const total = weights.reduce((sum, w) => sum + w, 0)
     const target = rng() * total
     const index = weights.reduce(
-      (found, w, i) => (found.done ? found : found.sum + w >= target ? { sum: 0, done: true, at: i } : { ...found, sum: found.sum + w }),
+      (found, w, i) =>
+        found.done ? found : found.sum + w >= target ? { sum: 0, done: true, at: i } : { ...found, sum: found.sum + w },
       { sum: 0, done: false, at: pool.length - 1 },
     ).at
     return go(
       pool.filter((_, i) => i !== index),
       left - 1,
-      [...acc, pool[index] as T],
+      [...acc, pool[index]],
     )
   }
   return go(items, count, [])
@@ -37,7 +38,7 @@ export const dayKey = (ts: number) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 
-export const extractJson = <T,>(text: string): T | null => {
+export const extractJson = <T>(text: string): T | null => {
   const starts = [text.indexOf('{'), text.indexOf('[')].filter((i) => i >= 0)
   if (starts.length === 0) return null
   const start = Math.min(...starts)
