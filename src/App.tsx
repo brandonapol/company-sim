@@ -53,7 +53,7 @@ const Onboarding = () => {
         </Field>
         <Field
           label="What it is, who it is for, where it stands today"
-          hint="Every employee reads this. I filled it in from the Quark repo; correct anything stale and add what the repo cannot tell me: price, units sold, who buys it and how they find you."
+          hint="Every employee reads this. Prefilled from the Quark repo. Correct anything stale and add what the repo does not say: price, units sold, who buys it and how they find you."
         >
           <textarea rows={10} value={pitch} onChange={(e) => setPitch(e.target.value)} />
         </Field>
