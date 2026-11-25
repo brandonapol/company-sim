@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { generateCharacter } from './character.ts'
 import { SCENARIOS, scenariosFor } from './curriculum.ts'
 import {
   autoAdvanceDue,
@@ -26,6 +27,7 @@ const person = (name: string, dept: Dept, level: Level = 'ic', extra: Partial<Pe
   provider: 'mock',
   persona: '',
   quirk: '',
+  character: generateCharacter(dept, level, new Set(), () => 0.5),
   background: '',
   strengths: [],
   concerns: [],

@@ -66,6 +66,21 @@ test('a CEO can run the company end to end without any API keys', async ({ page 
     await expect(page.locator('.stats')).toContainText('6 people')
   })
 
+  await test.step('every employee has a character sheet that can be rerolled', async () => {
+    await nav(page, 'People')
+    const archetypes = await page.locator('tr.clickable td:nth-child(3)').allTextContents()
+    expect(archetypes).toHaveLength(5)
+    expect(new Set(archetypes).size).toBeGreaterThan(1)
+    await page.locator('tr.clickable').first().click()
+    const sheet = page.locator('.character')
+    await expect(sheet).toContainText('Under pressure')
+    await expect(sheet.locator('textarea')).not.toBeEmpty()
+    const before = await sheet.locator('b').first().textContent()
+    await page.getByRole('button', { name: 'Reroll character' }).click()
+    await expect(sheet.locator('b').first()).not.toHaveText(before ?? '')
+    await page.getByRole('button', { name: 'Close' }).click()
+  })
+
   await test.step('the mentor writes a review', async () => {
     await nav(page, 'Mentor reviews')
     await page.getByRole('button', { name: 'Review my work' }).click()

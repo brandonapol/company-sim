@@ -1,4 +1,5 @@
 import { PERSONAS, QUIRKS, randomName } from './names.ts'
+import type { Character } from './character.ts'
 import type { Person, Req, Review, State } from './types.ts'
 import { pick } from './util.ts'
 import type { Rng } from './util.ts'
@@ -43,6 +44,7 @@ export type CandidateDraft = {
   hiddenWeakness: string
   persona: string
   salaryAsk: number
+  character?: Partial<Record<keyof Character, unknown>>
 }
 
 export const mockCandidates = (req: Req, people: Person[], rng: Rng): CandidateDraft[] => {

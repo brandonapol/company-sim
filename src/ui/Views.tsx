@@ -15,8 +15,10 @@ import {
   openReq,
   rejectCandidate,
   requestReview,
+  rerollCharacter,
   setView,
   startScenario,
+  updateCharacter,
   updateCompany,
   updatePerson,
 } from '../state/actions.ts'
@@ -113,6 +115,54 @@ export const CompanyView = ({ state }: { state: State }) => {
 
 const PROVIDERS: Provider[] = ['anthropic', 'openai', 'xai', 'mock']
 
+const CharacterSheet = ({ person }: { person: Person }) => {
+  const c = person.character
+  return (
+    <div className="character">
+      <div className="row between">
+        <b>
+          {c.archetype}{' '}
+          <span className="muted">
+            · {c.age}, from {c.hometown}
+          </span>
+        </b>
+        <button onClick={() => rerollCharacter(person.id)} title="Give this person a different character">
+          Reroll character
+        </button>
+      </div>
+      <p>{person.persona}</p>
+      <dl>
+        <dt>History</dt>
+        <dd>
+          {c.career} {person.background}
+        </dd>
+        <dt>Cares about</dt>
+        <dd>{c.values}</dd>
+        <dt>Driven by</dt>
+        <dd>{c.motivation}</dd>
+        <dt>Irritated by</dt>
+        <dd>{c.petPeeve}</dd>
+        <dt>Under pressure</dt>
+        <dd>{c.underPressure}</dd>
+        <dt>Outside work</dt>
+        <dd>{c.outsideWork}</dd>
+      </dl>
+      <Field label="How they write" hint="Edit this to change their voice. They read it before every message.">
+        <textarea rows={3} value={c.voice} onChange={(e) => updateCharacter(person.id, { voice: e.target.value })} />
+      </Field>
+      {c.samples.length ? (
+        <p className="muted">
+          Sounds like: <i>{c.samples[0]}</i>
+        </p>
+      ) : null}
+      <details>
+        <summary>Spoiler: the flaw they do not tell you about</summary>
+        <p className="muted">{person.quirk || 'None recorded.'}</p>
+      </details>
+    </div>
+  )
+}
+
 const PersonModal = ({ person, state, onClose }: { person: Person; state: State; onClose: () => void }) => {
   const [note, setNote] = useState('')
   const [leaving, setLeaving] = useState(false)
@@ -124,8 +174,7 @@ const PersonModal = ({ person, state, onClose }: { person: Person; state: State;
         {person.title} · {DEPT_LABEL[person.dept]} · joined week {person.hiredWeek}
         {reports.length ? ` · ${reports.length} direct reports` : ''}
       </p>
-      <p className="muted">{person.persona}</p>
-      {person.background ? <p className="muted">{person.background}</p> : null}
+      <CharacterSheet person={person} />
       <div className="grid2">
         <Field label="Title">
           <input value={person.title} onChange={(e) => updatePerson(person.id, { title: e.target.value })} />
@@ -242,6 +291,7 @@ export const PeopleView = ({ state }: { state: State }) => {
                       </span>
                     </td>
                     <td>{p.title}</td>
+                    <td className="muted">{p.character.archetype}</td>
                     <td>{LEVEL_LABEL[p.level]}</td>
                     <td className="muted">reports to {name(p.managerId)}</td>
                     <td>{money(p.salary)}</td>

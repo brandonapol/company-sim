@@ -1,4 +1,5 @@
 import { scenarioById, scenariosFor, stageForHeadcount } from './curriculum.ts'
+import { characterSheet } from './character.ts'
 import { activePeople, headcount } from './engine.ts'
 import { finance, runwayLabel } from './finance.ts'
 import { CEO_ID, DEPT_LABEL, LEVEL_LABEL, LEVEL_RANK, MENTOR_ID, SYSTEM_ID } from './types.ts'
@@ -54,14 +55,18 @@ export const companyBrief = (state: State) => {
 const styleRules = (words: number) =>
   `Write the way people write in Slack: plain text, no markdown headings or bullet lists, no name prefix, no stage directions, at most about ${words} words. Never mention being an AI or a simulation.`
 
+const NOT_AN_ASSISTANT =
+  'Stay in this voice for every message, including its sentence length, vocabulary and habits. You are a specific person, so avoid assistant habits: no "great question", no offering a menu of options, no summarizing what was just said, no balanced on-the-one-hand conclusions unless that is who you are, and no offering to help further.'
+
 export const employeeSystem = (state: State, person: Person) => {
   const manager = state.people.find((p) => p.id === person.managerId)
   return [
     `You are ${person.name}, ${person.title} (${LEVEL_LABEL[person.level]}, ${DEPT_LABEL[person.dept]}) at ${state.company.name}. You report to ${manager ? manager.name : `${state.company.ceoName}, the CEO`}.`,
     `This is a management practice simulation. The CEO is a real person learning to lead a growing company, so the most useful thing you can do is behave like a real, competent colleague and not like an assistant. Hold opinions grounded in your function, protect your team's priorities, bring specifics (numbers, trade-offs, proposals), push back when you disagree, and ask for decisions, clarity or resources when a real employee would. If the CEO is vague, say what you need to act. Do not flatter.`,
-    `Your personality: ${person.persona}`,
+    characterSheet(person.character),
     `A private tendency you never state outright but that shows in how you behave: ${person.quirk}`,
-    person.background ? `Your background: ${person.background}` : '',
+    person.background ? `More background: ${person.background}` : '',
+    NOT_AN_ASSISTANT,
     styleRules(state.settings.replyWords),
     '',
     companyBrief(state),
@@ -76,7 +81,8 @@ export const candidateSystem = (state: State, person: Person, req: Req | undefin
     `This is an interview practice simulation for the CEO. Answer like a real candidate: specific stories, real numbers, and ordinary human self-presentation. You may ask the CEO questions about the company, role, runway and expectations, and you are also evaluating them.`,
     `Background: ${person.background}`,
     `Strengths: ${person.strengths.join('; ')}`,
-    `Personality: ${person.persona}`,
+    characterSheet(person.character),
+    NOT_AN_ASSISTANT,
     `A real weakness you do not volunteer. If the CEO asks probing, specific follow-up questions it becomes visible in your answers; if they stay superficial it stays hidden: ${person.quirk}`,
     `Your salary expectation is about ${money(person.salary)}.`,
     styleRules(state.settings.replyWords + 40),
@@ -111,7 +117,7 @@ export const candidatesPrompt = (state: State, req: Req) =>
       : 'The CEO gave no description of what they want from this hire.',
     '',
     'Invent three realistic, clearly different candidates with a real trade-off between them (for example: strong but too senior and expensive, promising but unproven, great on paper with a hidden flaw). None should be an obviously right or wrong choice.',
-    'Return only JSON: an array of three objects with keys name (string), background (two sentences), strengths (array of 2-3 short strings), concerns (array of 1-2 short strings an interviewer could see on the resume), hiddenWeakness (one sentence, only discoverable by good interviewing), persona (one sentence on how they communicate), salaryAsk (number, USD per year).',
+    'Return only JSON: an array of three objects with keys name (string), background (two sentences), strengths (array of 2-3 short strings), concerns (array of 1-2 short strings an interviewer could see on the resume), hiddenWeakness (one sentence, only discoverable by good interviewing), persona (one sentence on how they communicate), salaryAsk (number, USD per year), and character: an object with age (number), hometown, career (their work history in two sentences), voice (how they write chat messages: sentence length, vocabulary, habits), samples (array of two short example messages in that voice), values (what they care about), petPeeve, underPressure (how they behave when stressed), motivation (why they want this job now) and outsideWork (one detail of life outside work). Make the three voices unmistakably different from each other, and none of them should sound like a polished assistant.',
   ].join('\n')
 
 export const mentorSystem = (state: State) =>

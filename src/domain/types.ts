@@ -1,4 +1,5 @@
 import type { RealProvider } from '../shared/api.ts'
+import type { Character } from './character.ts'
 
 export type Provider = RealProvider | 'mock'
 
@@ -20,6 +21,7 @@ export type Person = {
   provider: Provider
   persona: string
   quirk: string
+  character: Character
   background: string
   strengths: string[]
   concerns: string[]

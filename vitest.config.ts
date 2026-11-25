@@ -8,7 +8,7 @@ export default defineConfig({
       include: ['src/domain/**', 'server/app.ts', 'server/config.ts'],
       exclude: ['**/*.test.ts', 'src/domain/types.ts', 'src/domain/mock.ts', 'src/domain/prompts.ts'],
       reporter: ['text-summary', 'lcov'],
-      thresholds: { lines: 80, functions: 65, branches: 60 },
+      thresholds: { lines: 85, functions: 72, branches: 65 },
     },
   },
 })

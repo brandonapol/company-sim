@@ -23,7 +23,9 @@ import {
   mockUnprompted,
 } from '../domain/mock.ts'
 import type { CandidateDraft } from '../domain/mock.ts'
-import { PERSONAS, defaultTitle, generatePerson } from '../domain/names.ts'
+import { archetypeSummary, generateCharacter, mergeCharacter } from '../domain/character.ts'
+import type { Character } from '../domain/character.ts'
+import { archetypesIn, defaultTitle, ensureCharacters, generatePerson } from '../domain/names.ts'
 import {
   candidateSystem,
   candidatesPrompt,
@@ -329,7 +331,7 @@ export type StartForm = {
 export const startCompany = (form: StartForm) => {
   const { ui } = get()
   update((s) => {
-    const cofounder = form.cofounder ? cofounderPerson(form.cofounder) : null
+    const cofounder = form.cofounder ? cofounderPerson(form.cofounder, rng) : null
     const people = cofounder ? [{ ...cofounder, provider: assignProvider([], s.settings, ui.serverKeys) }] : []
     return {
       ...s,
@@ -382,6 +384,7 @@ const fillDelegatedReqs = () => {
             reqId: req.id,
           },
           taken,
+          archetypesIn([...current.people, ...acc], req.dept),
           rng,
         )
         taken.add(person.name)
@@ -549,24 +552,28 @@ export type ReqForm = {
   notes: string
 }
 
-const draftToCandidate = (draft: CandidateDraft, req: Req, week: number): Person => ({
-  id: uid(),
-  name: String(draft.name),
-  title: req.title,
-  dept: req.dept,
-  level: req.level,
-  managerId: req.managerId,
-  salary: Number(draft.salaryAsk) > 0 ? Math.round(Number(draft.salaryAsk)) : req.salary,
-  provider: 'mock',
-  persona: String(draft.persona ?? PERSONAS[0]),
-  quirk: String(draft.hiddenWeakness ?? ''),
-  background: String(draft.background ?? ''),
-  strengths: Array.isArray(draft.strengths) ? draft.strengths.map(String) : [],
-  concerns: Array.isArray(draft.concerns) ? draft.concerns.map(String) : [],
-  status: 'candidate',
-  hiredWeek: week,
-  reqId: req.id,
-})
+const draftToCandidate = (draft: CandidateDraft, req: Req, week: number, avoid: Set<string>): Person => {
+  const character = mergeCharacter(draft.character, generateCharacter(req.dept, req.level, avoid, rng))
+  return {
+    id: uid(),
+    name: String(draft.name),
+    title: req.title,
+    dept: req.dept,
+    level: req.level,
+    managerId: req.managerId,
+    salary: Number(draft.salaryAsk) > 0 ? Math.round(Number(draft.salaryAsk)) : req.salary,
+    provider: 'mock',
+    persona: String(draft.persona ?? archetypeSummary(character.archetype)),
+    quirk: String(draft.hiddenWeakness ?? ''),
+    character,
+    background: String(draft.background ?? ''),
+    strengths: Array.isArray(draft.strengths) ? draft.strengths.map(String) : [],
+    concerns: Array.isArray(draft.concerns) ? draft.concerns.map(String) : [],
+    status: 'candidate',
+    hiredWeek: week,
+    reqId: req.id,
+  }
+}
 
 const sourceCandidates = async (reqId: string) => {
   const { state, ui } = get()
@@ -579,7 +586,7 @@ const sourceCandidates = async (reqId: string) => {
       wanted: usableProviders(state.settings, ui.serverKeys)[0] ?? 'mock',
       system: 'You design realistic hiring exercises for a management simulation. Reply with JSON only.',
       prompt: candidatesPrompt(state, req),
-      maxTokens: 1400,
+      maxTokens: 3000,
       effort: 'low',
       mock: () => JSON.stringify(fallback()),
     })
@@ -587,10 +594,16 @@ const sourceCandidates = async (reqId: string) => {
     const drafts =
       Array.isArray(parsed) && parsed.length > 0 && parsed.every((d) => d && d.name) ? parsed.slice(0, 4) : fallback()
     const current = get().state
-    const candidates = drafts.map((d) => ({
-      ...draftToCandidate(d, req, current.company.week),
-      provider: assignProvider(current.people, current.settings, ui.serverKeys),
-    }))
+    const candidates = drafts.reduce<Person[]>((acc, d) => {
+      const avoid = new Set([...archetypesIn(current.people, req.dept), ...acc.map((c) => c.character.archetype)])
+      return [
+        ...acc,
+        {
+          ...draftToCandidate(d, req, current.company.week, avoid),
+          provider: assignProvider(current.people, current.settings, ui.serverKeys),
+        },
+      ]
+    }, [])
     update((s) => ({
       ...s,
       people: [...s.people, ...candidates],
@@ -746,6 +759,23 @@ export const updateCompany = (patch: Partial<Company>) => update((s) => ({ ...s,
 export const updatePerson = (personId: string, patch: Partial<Person>) =>
   update((s) => ({ ...s, people: s.people.map((p) => (p.id === personId ? { ...p, ...patch } : p)) }))
 
+export const rerollCharacter = (personId: string) =>
+  update((s) => ({
+    ...s,
+    people: s.people.map((p) => {
+      if (p.id !== personId) return p
+      const avoid = new Set([...archetypesIn(s.people, p.dept), p.character.archetype])
+      const character = generateCharacter(p.dept, p.level, avoid, rng)
+      return { ...p, character, persona: archetypeSummary(character.archetype) }
+    }),
+  }))
+
+export const updateCharacter = (personId: string, patch: Partial<Character>) =>
+  update((s) => ({
+    ...s,
+    people: s.people.map((p) => (p.id === personId ? { ...p, character: { ...p.character, ...patch } } : p)),
+  }))
+
 export const openDm = (personId: string) => {
   const channel = get().state.channels.find((c) => c.personId === personId)
   if (channel) setView({ kind: 'channel', id: channel.id })
@@ -800,6 +830,7 @@ export const importState = (json: string): boolean => {
   update(() => ({
     ...emptyState(),
     ...parsed,
+    people: ensureCharacters(parsed.people, rng),
     settings: {
       ...parsed.settings,
       providers: {

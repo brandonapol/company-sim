@@ -147,6 +147,45 @@ export const SCENARIOS: Scenario[] = [
       'Works from per-unit numbers (price, cost of goods, cost to serve), picks a model consistent with the no-subscription promise or changes the promise deliberately, addresses the open-source free-rider question, and identifies what must be measured next.',
   },
   {
+    id: 'founder-time',
+    stage: 0,
+    topic: 'Leadership',
+    title: 'You have thirty minutes a day for this',
+    raisedBy: 'exec',
+    kickoff:
+      'Can I be direct? You have a day job, so most days we get maybe half an hour of you. Right now that half hour goes to whatever was loudest overnight, and three things have been waiting on your yes for over a week. How do we run this so your thirty minutes moves the most important thing, and the rest does not block on you?',
+    primer:
+      'When the founder is the scarcest resource, the operating system has to be built around that. Name one primary outcome per day, batch the decisions only you can make, and push everything else down with a clear outcome, a deadline and the authority to act. Decide in advance which decisions are reversible and do not need you at all.',
+    frameworks: [
+      'Eisenhower matrix',
+      'Delegation levels',
+      'Reversible vs irreversible decisions',
+      'Maker time vs manager time',
+    ],
+    rubric:
+      'Defines what only the CEO decides, delegates the rest with explicit authority, sets a daily or weekly rhythm that fits the real time available, and clears the existing blocked items instead of just describing a system.',
+  },
+  {
+    id: 'quark-claims-discipline',
+    stage: 0,
+    topic: 'Marketing',
+    title: 'The ad says something the product does not do yet',
+    raisedBy: 'marketing',
+    onlyProduct: 'quark',
+    kickoff:
+      'The draft landing page for {product} says "your photos, backed up automatically, reachable from anywhere". It tests far better than the honest version. It is also not what ships today: uploads are manual and on the home network. Engineering says the real thing is a couple of months out. Do we run the strong claim now, the true one, or wait?',
+    primer:
+      'For a product whose entire pitch is trust, a claim the product cannot keep is the most expensive kind of marketing: it converts well and then produces refunds, bad reviews and, for advertising, legal exposure. Keep a short written list of what you may and may not say, tied to what has shipped, and update it on release. "Coming soon" is fine when it is true and dated.',
+    frameworks: [
+      'Truth in advertising',
+      'Claim substantiation',
+      'Brand trust as an asset',
+      'Under-promise, over-deliver',
+    ],
+    rubric:
+      'Chooses the true claim or a clearly labelled future one, weighs conversion against refunds, reviews and legal risk, sets up a simple rule for who approves public claims, and gives marketing something strong and honest to say instead.',
+  },
+  {
     id: 'pricing',
     stage: 0,
     topic: 'Finance',

@@ -12,9 +12,12 @@ A mentor reads everything you do and tells you how you are leading.
 ## What is in it
 
 - **Channels and DMs** with employees who push back, bring ideas and ask you for decisions.
-- **A curriculum of 27 general situations, plus four specific to Quark (focus vs breadth, the no-subscription revenue model, hardware inventory, support load),** across five company sizes (Founders 2-10, Team 11-25, Org 26-50, Company 51-100, Scale 101-500):
+- **A curriculum of 28 general situations, plus five specific to Quark (focus vs breadth, the no-subscription revenue model, honest marketing claims, hardware inventory, support load),** across five company sizes (Founders 2-10, Team 11-25, Org 26-50, Company 51-100, Scale 101-500):
   first marketing hire, positioning, pricing, runway, first manager, underperformers, comp, org design, hiring executives,
   fundraising, boards, layoffs, exec conflict, planning and more. Each comes with a short primer, frameworks to look up, and a rubric.
+- **Character profiles.** Every employee and candidate is a specific person: one of 14 archetypes (the scope cutter, the quiet
+  counsel, the storyteller, the skeptic, the new grad and others) with their own writing voice, career history, pet peeve,
+  motivation, behavior under pressure and life outside work. Open anyone in People to read, edit or reroll their sheet.
 - **Hiring**: open a role, get three candidates with real trade-offs, interview them in chat, make an offer. Or delegate hiring to a
   manager and stop meeting everyone, which is its own lesson.
 - **A toy finance model** so every hire visibly moves burn and runway.

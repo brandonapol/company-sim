@@ -1,7 +1,9 @@
-import { PERSONAS, QUIRKS } from './names.ts'
+import { archetypeSummary, generateCharacter } from './character.ts'
+import { QUIRKS } from './names.ts'
 import type { Channel, Company, Dept, Person, Settings, State } from './types.ts'
 import { DEPT_LABEL } from './types.ts'
 import { uid } from './util.ts'
+import type { Rng } from './util.ts'
 
 export const defaultSettings = (): Settings => ({
   activity: 'quiet',
@@ -76,21 +78,25 @@ export const emptyState = (): State => ({
 
 export type Cofounder = { name: string; title: string; salary: number }
 
-export const cofounderPerson = (cofounder: Cofounder): Person => ({
-  id: uid(),
-  name: cofounder.name,
-  title: cofounder.title,
-  dept: 'exec',
-  level: 'cxo',
-  managerId: null,
-  salary: cofounder.salary,
-  provider: 'mock',
-  persona: PERSONAS[1],
-  quirk: QUIRKS[3],
-  background: 'Co-founder. Has been building the product from day one and knows where every body is buried.',
-  strengths: [],
-  concerns: [],
-  status: 'active',
-  hiredWeek: 1,
-  reqId: null,
-})
+export const cofounderPerson = (cofounder: Cofounder, rng: Rng): Person => {
+  const character = generateCharacter('exec', 'cxo', new Set(), rng)
+  return {
+    id: uid(),
+    name: cofounder.name,
+    title: cofounder.title,
+    dept: 'exec',
+    level: 'cxo',
+    managerId: null,
+    salary: cofounder.salary,
+    provider: 'mock',
+    persona: archetypeSummary(character.archetype),
+    quirk: QUIRKS[3],
+    character,
+    background: 'Co-founder. Has been building the product from day one and knows where every body is buried.',
+    strengths: [],
+    concerns: [],
+    status: 'active',
+    hiredWeek: 1,
+    reqId: null,
+  }
+}

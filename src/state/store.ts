@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { ensureCharacters } from '../domain/names.ts'
 import { emptyState } from '../domain/seed.ts'
 import type { State } from '../domain/types.ts'
 import { loadValue, saveValue } from '../lib/storage.ts'
@@ -83,6 +84,7 @@ const migrate = (saved: State): State => {
   return {
     ...base,
     ...saved,
+    people: ensureCharacters(saved.people ?? [], Math.random),
     settings: {
       ...base.settings,
       ...saved.settings,

@@ -1,3 +1,4 @@
+import { archetypeSummary, generateCharacter } from './character.ts'
 import type { Dept, Level, Person, Provider } from './types.ts'
 import { pick, uid } from './util.ts'
 import type { Rng } from './util.ts'
@@ -135,21 +136,33 @@ export type PersonSeed = {
   reqId: string | null
 }
 
-export const generatePerson = (seed: PersonSeed, taken: Set<string>, rng: Rng): Person => ({
-  id: uid(),
-  name: randomName(taken, rng),
-  title: seed.title,
-  dept: seed.dept,
-  level: seed.level,
-  managerId: seed.managerId,
-  salary: seed.salary,
-  provider: seed.provider,
-  persona: pick(PERSONAS, rng),
-  quirk: pick(QUIRKS, rng),
-  background: '',
-  strengths: [],
-  concerns: [],
-  status: 'active',
-  hiredWeek: seed.week,
-  reqId: seed.reqId,
-})
+export const archetypesIn = (people: Person[], dept: Dept): Set<string> =>
+  new Set(people.filter((p) => p.status === 'active' && p.dept === dept).map((p) => p.character.archetype))
+
+export const ensureCharacters = (people: Person[], rng: Rng): Person[] =>
+  people.map((p) =>
+    (p as Partial<Person>).character ? p : { ...p, character: generateCharacter(p.dept, p.level, new Set(), rng) },
+  )
+
+export const generatePerson = (seed: PersonSeed, taken: Set<string>, avoid: Set<string>, rng: Rng): Person => {
+  const character = generateCharacter(seed.dept, seed.level, avoid, rng)
+  return {
+    id: uid(),
+    name: randomName(taken, rng),
+    title: seed.title,
+    dept: seed.dept,
+    level: seed.level,
+    managerId: seed.managerId,
+    salary: seed.salary,
+    provider: seed.provider,
+    persona: archetypeSummary(character.archetype),
+    quirk: pick(QUIRKS, rng),
+    character,
+    background: '',
+    strengths: [],
+    concerns: [],
+    status: 'active',
+    hiredWeek: seed.week,
+    reqId: seed.reqId,
+  }
+}
