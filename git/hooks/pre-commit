@@ -2,9 +2,9 @@
 set -euo pipefail
 
 if command -v gmake &>/dev/null; then
-  MAKE=gmake
+  MAKE="gmake"
 else
-  MAKE=make
+  MAKE="make"
 fi
 
 echo "Running ${MAKE} check/fast..."

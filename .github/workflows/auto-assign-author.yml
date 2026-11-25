@@ -1,0 +1,14 @@
+name: Auto-Assign Author
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+permissions:
+  pull-requests: write
+jobs:
+  auto-assign-author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: autobutler-org/auto-assign-author@25423cd556c9478331904e1db61c304b3bf67432 # main

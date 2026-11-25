@@ -1,0 +1,67 @@
+name: Check code quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+# Cancels only superseded runs of the same pull request. Push, merge-queue and manual
+# runs each get a group of their own, so none of them is ever canceled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+permissions:
+  contents: read
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Check formatting
+        run: make check/format
+      - name: Lint
+        run: make check/lint
+      - name: Typecheck
+        run: make check/types
+      - name: Spellcheck
+        run: make check/spelling
+      - name: Check the lockfile is in sync
+        run: make check/lockfile
+      - name: Check for uncommitted changes
+        run: make check/clean-tree
+  check-actions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # actionlint, plus a check that every action is pinned to a commit SHA.
+      - name: Lint workflows
+        run: make check/actions
+      - name: Lint shell scripts
+        run: make check/shell
+  check-dockerfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Lint Dockerfile
+        run: make check/dockerfile
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Check for vulnerabilities
+        run: make check/vuln

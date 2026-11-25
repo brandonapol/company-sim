@@ -1,0 +1,82 @@
+name: Test
+on:
+  # Also on push to main so the badge has a run attributed to the branch, and so the
+  # caches pull requests restore from are saved there.
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+# Superseded runs of the same pull request are canceled. Pushes to main share one group
+# and are not canceled, so they run one at a time.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || (github.event_name == 'push' && github.ref) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      # Fails when coverage drops under the thresholds in vitest.config.ts.
+      - name: Unit tests with coverage
+        run: make test/unit
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+          retention-days: 7
+  test-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Install the browser
+        run: make setup/playwright
+      # Runs in mock mode: no API keys, no tokens spent, no outbound calls.
+      - name: End-to-end tests
+        run: make test/e2e
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+  test-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Smoke test the built server
+        run: make test/smoke
+  test-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Builds the image, runs it read-only as non-root, probes it, and waits for
+      # its own HEALTHCHECK to report healthy.
+      - name: Smoke test the container image
+        run: make test/smoke/docker

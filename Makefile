@@ -214,7 +214,7 @@ test/smoke/docker: build/docker ## Run the container image and probe it, includi
 ##@ Code quality
 
 .PHONY: check
-check: check/format check/lint check/types check/spelling check/lockfile check/actions ## Run every static check CI runs
+check: check/format check/lint check/types check/spelling check/lockfile check/actions check/shell ## Run every static check CI runs
 
 .PHONY: check/fast
 check/fast: node_modules ## Check staged files only (what the pre-commit hook runs)
@@ -256,6 +256,14 @@ check/actions: $(ACTIONLINT) ## Lint GitHub Actions workflows, and require every
 		echo "Pin each as owner/repo@<40-character sha> # vX.Y.Z so Renovate can keep it current."
 		exit 1
 	fi
+
+.PHONY: check/shell
+check/shell: ## Lint shell scripts and git hooks with shellcheck
+	if ! command -v shellcheck >/dev/null 2>&1; then
+		echo "shellcheck is not installed. Install it (brew install shellcheck, apt install shellcheck), then run this again."
+		exit 1
+	fi
+	shellcheck scripts/*.bash git/hooks/*
 
 .PHONY: check/vuln
 check/vuln: node_modules ## Check dependencies for known vulnerabilities
