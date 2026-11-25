@@ -1,0 +1,22 @@
+name: Feature Request
+description: Propose a capability or a new curriculum situation.
+title: '[Feature] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to practice or do that you cannot today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: true
+  - type: textarea
+    id: cost
+    attributes:
+      label: Token and noise impact
+      description: Does this add model calls or unprompted messages? How would the budget and activity controls apply?

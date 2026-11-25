@@ -1,0 +1,55 @@
+name: Bug Report
+description: Something is broken.
+title: '[Bug] '
+labels: ['bug']
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      multiple: true
+      options:
+        - Chat and channels
+        - Hiring and interviews
+        - Curriculum and decisions
+        - Mentor
+        - Finance model
+        - Settings, budget and pacing
+        - Server, auth or model proxy
+        - CI or release
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown at the top of Settings, or from `make version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Model provider involved
+      options:
+        - None or mock mode
+        - Claude (Anthropic)
+        - Codex / GPT (OpenAI)
+        - Grok (xAI)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server log lines or browser console errors
+      description: Remove API keys before pasting. Server logs never contain them; browser network tabs do.
+      render: shell

@@ -1,5 +1,10 @@
 # Company Sim
 
+[![Check](https://github.com/brandonapol/company-sim/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/brandonapol/company-sim/actions/workflows/check.yml)
+[![Test](https://github.com/brandonapol/company-sim/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/brandonapol/company-sim/actions/workflows/test.yml)
+[![Build](https://github.com/brandonapol/company-sim/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/brandonapol/company-sim/actions/workflows/build.yml)
+[![CodeQL](https://github.com/brandonapol/company-sim/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/brandonapol/company-sim/actions/workflows/codeql.yml)
+
 A private, Slack-style practice ground for running a company as it grows from 2 people to 500.
 Your employees are AI agents (Claude, Grok, Codex/GPT) with their own roles, opinions and blind spots.
 A mentor reads everything you do and tells you how you are leading.
@@ -28,25 +33,25 @@ Nothing runs in the background and nothing notifies you.
 
 ## Run it
 
-Requires Node 22.18+.
+Requires Node 22.18+ and GNU Make.
 
 ```bash
-npm install
-npm run dev            # UI on http://localhost:5173, API on :8787
+make setup
+make watch                         # UI on http://localhost:5173, API on :8787
 ```
 
 Production, single process:
 
 ```bash
-npm run build
-APP_PASSWORD=choose-one npm start     # http://localhost:8787, user "ceo"
+APP_PASSWORD=choose-one make serve # http://localhost:8787, user "ceo"
 ```
 
-Docker:
+Container:
 
 ```bash
-docker build -t company-sim .
-docker run -p 8787:8787 -e APP_PASSWORD=choose-one company-sim
+docker run -p 8787:8787 -e APP_PASSWORD=choose-one ghcr.io/brandonapol/company-sim:latest
+# or, from a checkout:
+make serve/docker APP_PASSWORD=choose-one
 ```
 
 ### Configuration
@@ -58,7 +63,8 @@ docker run -p 8787:8787 -e APP_PASSWORD=choose-one company-sim
 | `PORT`, `HOST`                                       | Default `8787`; host is `0.0.0.0` when a password is set.                 |
 | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `XAI_API_KEY` | Optional server-side keys, used when the browser has none.                |
 
-Basic auth sends the password with every request, so put this behind HTTPS if it leaves your machine.
+`/healthz` answers without credentials for container and load-balancer probes. Basic auth sends the password
+with every request, so put this behind HTTPS if it leaves your machine. See [SECURITY.md](SECURITY.md).
 
 ## How it is built
 
@@ -72,6 +78,10 @@ All company data and API keys live in your browser. Keys are sent only to your o
 Moving state to SQLite later means replacing `src/lib/storage.ts` with calls to the server.
 
 ```bash
-npm test         # unit tests
-npm run build    # typecheck + bundle
+make check     # format, lint, types, spelling, workflows, shell
+make test      # unit + coverage, browser end-to-end, smoke
+make help      # everything else
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development loop and CI, and [docs/release.md](docs/release.md)
+for how releases are cut, verified and yanked.

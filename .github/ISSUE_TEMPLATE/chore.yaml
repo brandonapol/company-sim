@@ -1,0 +1,11 @@
+name: Chore
+description: Tooling, CI, dependencies, cleanup.
+title: '[Chore] '
+labels: ['chore']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What needs doing, and why now?
+    validations:
+      required: true
