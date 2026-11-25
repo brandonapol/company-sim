@@ -14,13 +14,20 @@ import { CompanyView, CurriculumView, DecisionsView, HiringView, MentorView, Peo
 
 const AUTO_CHECK_MS = 60_000
 
+const QUARK_PITCH = [
+  'Quark is a self-hosted personal cloud: a small device that sits in your home and replaces Google Drive or iCloud for photos, files and documents. You buy the hardware once. No subscription, no data mining, and the data never leaves the house.',
+  'It is open source (MIT-0): one Go binary with SQLite on the device, Flutter apps for web, iOS and Android, and optional remote access over Tailscale with no vendor relay. Beyond files and photos it already includes docs, sheets, slides, music, books, calendar, chat and a built-in password vault.',
+  'Buyers cross-shop Synology, UGREEN, QNAP and TerraMaster. Our own competitive analysis (September 2026) listed the gaps a real buyer would feel: only one user account per device, no automatic phone photo backup, no share links, no SMB network drive, no two-factor login, no desktop sync client and no RAID or redundancy story.',
+  'The team today is two people.',
+].join('\n\n')
+
 const Onboarding = () => {
   const [ceoName, setCeoName] = useState('')
-  const [companyName, setCompanyName] = useState('')
+  const [companyName, setCompanyName] = useState('Autobutler')
   const [product, setProduct] = useState('Quark')
-  const [pitch, setPitch] = useState('')
-  const [cash, setCash] = useState(500_000)
-  const [mrr, setMrr] = useState(5_000)
+  const [pitch, setPitch] = useState(QUARK_PITCH)
+  const [cash, setCash] = useState(250_000)
+  const [mrr, setMrr] = useState(0)
   const [cofounderName, setCofounderName] = useState('')
   const [cofounderTitle, setCofounderTitle] = useState('Co-founder & CTO')
   const ready = ceoName.trim() && companyName.trim() && product.trim() && pitch.trim().length >= 20
@@ -46,9 +53,9 @@ const Onboarding = () => {
         </Field>
         <Field
           label="What it is, who it is for, where it stands today"
-          hint="Every employee reads this. The more real detail (customers, pricing, what is working, what is not), the more useful they are."
+          hint="Every employee reads this. I filled it in from the Quark repo; correct anything stale and add what the repo cannot tell me: price, units sold, who buys it and how they find you."
         >
-          <textarea rows={5} value={pitch} onChange={(e) => setPitch(e.target.value)} />
+          <textarea rows={10} value={pitch} onChange={(e) => setPitch(e.target.value)} />
         </Field>
         <div className="grid2">
           <Field label="Co-founder name" hint="Optional. They become your first AI colleague.">
@@ -60,7 +67,7 @@ const Onboarding = () => {
           <Field label="Cash in the bank ($)">
             <NumberInput value={cash} onChange={setCash} step={10_000} />
           </Field>
-          <Field label="Monthly recurring revenue ($)">
+          <Field label="Revenue per month today ($)">
             <NumberInput value={mrr} onChange={setMrr} step={500} />
           </Field>
         </div>

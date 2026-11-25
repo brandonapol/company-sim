@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SCENARIOS } from './curriculum.ts'
+import { SCENARIOS, scenariosFor } from './curriculum.ts'
 import {
   autoAdvanceDue,
   delegatedFillsThisWeek,
@@ -112,7 +112,7 @@ describe('finance', () => {
 
 describe('curriculum', () => {
   it('starts with the first marketing hire and stays within the current stage', () => {
-    expect(nextScenario([], people)?.id).toBe('first-marketing-hire')
+    expect(nextScenario([], people, 'Quark')?.id).toBe('first-marketing-hire')
   })
 
   it('moves to later stages once the current one is exhausted', () => {
@@ -123,7 +123,12 @@ describe('curriculum', () => {
       decidedWeek: 1,
       channelId: 'leadership',
     }))
-    expect(nextScenario(done, people)?.stage).toBe(1)
+    expect(nextScenario(done, people, 'Quark')?.stage).toBe(1)
+  })
+
+  it('only raises the Quark-specific situations when the product is Quark', () => {
+    expect(scenariosFor('Quark').some((s) => s.id === 'quark-revenue-model')).toBe(true)
+    expect(scenariosFor('Something else').some((s) => s.onlyProduct)).toBe(false)
   })
 
   it('has unique scenario ids', () => {

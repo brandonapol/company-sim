@@ -1,4 +1,4 @@
-import { SCENARIOS, scenarioById, stageForHeadcount } from './curriculum.ts'
+import { scenarioById, scenariosFor, stageForHeadcount } from './curriculum.ts'
 import { activePeople, headcount } from './engine.ts'
 import { finance, runwayLabel } from './finance.ts'
 import { CEO_ID, DEPT_LABEL, LEVEL_LABEL, LEVEL_RANK, MENTOR_ID, SYSTEM_ID } from './types.ts'
@@ -43,7 +43,7 @@ export const companyBrief = (state: State) => {
     `About: ${company.pitch}`,
     `CEO: ${company.ceoName}. Week ${company.week} of the simulation. Stage: ${stage.name} (${stage.theme}).`,
     `Headcount ${f.headcount} including the CEO${byDept ? ` (${byDept})` : ''}.`,
-    `Finances: cash ${money(company.cash)}, MRR ${money(company.mrr)}, monthly burn ${money(f.burn)}, runway ${runwayLabel(f)}.`,
+    `Finances: cash ${money(company.cash)}, monthly revenue ${money(company.mrr)}, monthly burn ${money(f.burn)}, runway ${runwayLabel(f)}.`,
     leaders ? `Key people: ${leaders}.` : '',
     decisions ? `Recent CEO decisions:\n${decisions}` : '',
   ]
@@ -172,7 +172,7 @@ export const reviewPrompt = (state: State) => {
     .map((r) => `- ${r.title} x${r.count} (${r.mode}, ${r.status}, opened week ${r.openedWeek}${r.notes ? `, brief: ${r.notes}` : ', no brief written'})`)
     .join('\n')
   const stage = stageForHeadcount(headcount(state.people))
-  const upcoming = SCENARIOS.filter((s) => s.stage === stage.index && !state.scenarios.some((r) => r.id === s.id))
+  const upcoming = scenariosFor(state.company.product).filter((s) => s.stage === stage.index && !state.scenarios.some((r) => r.id === s.id))
     .map((s) => s.title)
     .join('; ')
   const previous = state.reviews[state.reviews.length - 1]

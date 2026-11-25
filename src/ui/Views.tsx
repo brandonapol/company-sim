@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SCENARIOS, STAGES, stageForHeadcount } from '../domain/curriculum.ts'
+import { STAGES, scenariosFor, stageForHeadcount } from '../domain/curriculum.ts'
 import { activePeople, headcount } from '../domain/engine.ts'
 import { finance, runwayLabel } from '../domain/finance.ts'
 import { defaultTitle } from '../domain/names.ts'
@@ -51,8 +51,8 @@ export const CompanyView = ({ state }: { state: State }) => {
       <div className="metrics">
         <Metric label="Headcount (incl. you)" value={String(f.headcount)} />
         <Metric label="Cash" value={money(company.cash)} bad={company.cash < 0} />
-        <Metric label="MRR" value={money(company.mrr)} />
-        <Metric label="MRR growth / month" value={`${f.growthPct.toFixed(1)}%`} />
+        <Metric label="Monthly revenue" value={money(company.mrr)} />
+        <Metric label="Revenue growth / month" value={`${f.growthPct.toFixed(1)}%`} />
         <Metric label="Payroll / month" value={money(f.payroll)} />
         <Metric label="Total burn / month" value={money(f.burn)} />
         <Metric label="Net burn / month" value={money(f.netBurn)} />
@@ -75,17 +75,17 @@ export const CompanyView = ({ state }: { state: State }) => {
         <h3>The numbers behind the sim</h3>
         <p className="muted">
           This is a deliberately simple model so that hiring has a visible cost: payroll is salaries plus 25% load, cash
-          moves by net burn each week, and MRR grows at the base rate plus a diminishing boost from go-to-market and
+          moves by net burn each week, and monthly revenue grows at the base rate plus a diminishing boost from go-to-market and
           product headcount. Edit anything here to simulate a fundraise, a price change or a bad quarter.
         </p>
         <div className="grid2">
           <Field label="Cash ($)">
             <NumberInput value={Math.round(company.cash)} min={-100_000_000} step={50_000} onChange={(v) => updateCompany({ cash: v })} />
           </Field>
-          <Field label="MRR ($)">
+          <Field label="Monthly revenue ($)">
             <NumberInput value={Math.round(company.mrr)} step={1_000} onChange={(v) => updateCompany({ mrr: v })} />
           </Field>
-          <Field label="Base MRR growth (% per month)">
+          <Field label="Base revenue growth (% per month)">
             <NumberInput value={company.baseGrowthPct} min={-50} step={0.5} onChange={(v) => updateCompany({ baseGrowthPct: v })} />
           </Field>
           <Field label="Non-payroll costs ($ per month)">
@@ -427,10 +427,11 @@ export const HiringView = ({ state, ui }: { state: State; ui: Ui }) => {
 export const CurriculumView = ({ state }: { state: State }) => {
   const current = stageForHeadcount(headcount(state.people)).index
   const done = state.scenarios.filter((r) => r.status === 'decided').length
+  const scenarios = scenariosFor(state.company.product)
   return (
     <div className="page">
       <h2>
-        Curriculum <span className="muted">{done} of {SCENARIOS.length} situations decided</span>
+        Curriculum <span className="muted">{done} of {scenarios.length} situations decided</span>
       </h2>
       <p className="muted">
         These are the decisions that tend to arrive at each company size. One new situation is raised by your team each
@@ -443,7 +444,7 @@ export const CurriculumView = ({ state }: { state: State }) => {
             {stage.index === current ? <span className="tag open">you are here</span> : null}
           </h3>
           <p className="muted">{stage.ceoJob}</p>
-          {SCENARIOS.filter((s) => s.stage === stage.index).map((s) => {
+          {scenarios.filter((s) => s.stage === stage.index).map((s) => {
             const run = state.scenarios.find((r) => r.id === s.id)
             return (
               <details key={s.id} className="lesson">

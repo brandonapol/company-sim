@@ -30,6 +30,7 @@ export type Scenario = {
   primer: string
   frameworks: string[]
   rubric: string
+  onlyProduct?: string
 }
 
 export const STAGES: Stage[] = [
@@ -108,6 +109,36 @@ export const SCENARIOS: Scenario[] = [
       'Commits to a specific segment and explicitly excludes others, names the competitive alternative and the differentiated value, and accepts the trade-off instead of keeping every option open.',
   },
   {
+    id: 'quark-focus-vs-breadth',
+    stage: 0,
+    topic: 'Strategy',
+    title: 'Ten apps, or the three things buyers expect?',
+    raisedBy: 'exec',
+    onlyProduct: 'quark',
+    kickoff:
+      'I reread our competitive analysis. {product} ships docs, sheets, slides, music, books, calendar, chat and a password vault, and yet a family cannot have more than one account, phones do not back up photos automatically, there are no share links and it will not mount as a network drive. Those are the reasons people buy a Synology or a UGREEN. With two of us, what do we stop building so the basics get done, and in what order?',
+    primer:
+      'Buyers compare you on table stakes before they ever notice what makes you different. Sort features into must-haves (their absence loses the sale), performance features (more is better) and delighters, and close must-have gaps before adding delighters. With a tiny team, strategy is mostly the list of things you decline to build this quarter.',
+    frameworks: ['Kano model', 'Table stakes vs differentiators', 'Opportunity cost', 'Stop-doing list'],
+    rubric:
+      'Names an explicit order for the missing basics tied to a target buyer, says what is paused or cut, explains what the breadth is for (or admits it is a distraction), and sets a checkpoint to revisit.',
+  },
+  {
+    id: 'quark-revenue-model',
+    stage: 0,
+    topic: 'Finance',
+    title: 'No subscription. So what pays the salaries?',
+    raisedBy: 'exec',
+    onlyProduct: 'quark',
+    kickoff:
+      'Our pitch is "buy the hardware once, no subscriptions". I love it and it worries me. Every customer costs us support, updates and app-store upkeep forever, and pays us once. The software is MIT-0, so anyone can run it on their own box and pay us nothing. Before we hire anyone on the back of this, what is the revenue model that funds a company and does not break the promise?',
+    primer:
+      'A one-time sale has to cover a lifetime of cost to serve, so hardware margin and repeat purchase matter far more than in subscription software. Options that keep the promise include healthy gross margin on the device, upgrades and accessories (drives, a second unit for off-site backup), optional paid services that are truly optional (encrypted off-site backup, managed remote access), and paid support or setup. Know your contribution margin per unit before you scale marketing.',
+    frameworks: ['Unit economics and contribution margin', 'Lifetime cost to serve', 'Open-core and optional services', 'Razor-and-blades vs one-time sale'],
+    rubric:
+      'Works from per-unit numbers (price, cost of goods, cost to serve), picks a model consistent with the no-subscription promise or changes the promise deliberately, addresses the open-source free-rider question, and identifies what must be measured next.',
+  },
+  {
     id: 'pricing',
     stage: 0,
     topic: 'Finance',
@@ -134,6 +165,21 @@ export const SCENARIOS: Scenario[] = [
     frameworks: ['Burn rate and runway', 'Default alive vs default dead', 'Milestone-based planning', 'Burn multiple'],
     rubric:
       'Uses the actual cash, burn and runway numbers, sequences hires against milestones, keeps a fundraising buffer, and identifies what gets cut first if growth disappoints.',
+  },
+  {
+    id: 'quark-hardware-cash',
+    stage: 0,
+    topic: 'Operations',
+    title: 'Inventory: how many units do we build?',
+    raisedBy: 'exec',
+    onlyProduct: 'quark',
+    kickoff:
+      'The supplier wants a commitment. Per-unit cost drops a lot at the bigger order size, but that ties up a big slice of our cash in boxes for months before a single one sells, and we would be storing, flashing and shipping them ourselves. Small batch at worse margin, big batch on a guess, or take pre-orders first? I need a number from you.',
+    primer:
+      'Hardware companies die of cash, not of margin: money leaves when you order and returns when customers pay, and the gap is your cash conversion cycle. Pre-orders or crowdfunding turn customers into your financing and validate demand, at the price of delivery promises you must keep. Size the first batch from evidence of demand, and price in returns, warranty and dead-on-arrival units.',
+    frameworks: ['Cash conversion cycle', 'Minimum order quantity and bill of materials', 'Pre-orders as demand validation', 'Warranty and returns reserve'],
+    rubric:
+      'Sizes the order from demand evidence and runway rather than unit cost alone, considers pre-orders to shift cash timing, accounts for fulfilment, warranty and support load, and states the downside case if units do not sell.',
   },
   {
     id: 'cofounder-roles',
@@ -246,6 +292,21 @@ export const SCENARIOS: Scenario[] = [
     frameworks: ['Operating cadence', '1:1s', 'Decision logs / written culture', 'All-hands and AMAs'],
     rubric:
       'Designs a lightweight cadence rather than many meetings, commits to written decisions, clarifies who communicates what, and sees repetition as the CEO\'s job.',
+  },
+  {
+    id: 'quark-support-load',
+    stage: 1,
+    topic: 'Operations',
+    title: 'Support is eating the team',
+    raisedBy: 'success',
+    onlyProduct: 'quark',
+    kickoff:
+      'Support volume doubled with the last batch of {product} units. Most tickets are home-network problems, drives people plugged in, and "where did my photos go". Engineers are answering them because nobody else can, and a couple of angry posts are sitting on the self-hosting forums. People store their only copy of family photos on this thing. What is our support model, and what do we promise?',
+    primer:
+      'For a product that holds irreplaceable data, support and reliability are the brand. Tier support so engineers only see what needs an engineer, fix the top ticket drivers in the product (the cheapest ticket is the one never filed), publish what you do and do not promise, and treat community forums as a channel you staff on purpose. Track contact rate per unit and cost per ticket, because both come straight out of a one-time sale.',
+    frameworks: ['Tiered support', 'Contact rate and cost to serve', 'Pareto analysis of ticket drivers', 'Community-led support'],
+    rubric:
+      'Protects engineering time with a clear tiering and ownership, attacks root causes in the product, sets an explicit promise about data safety and response times, and connects support cost back to unit economics.',
   },
   {
     id: 'org-design',
@@ -458,5 +519,8 @@ export const SCENARIOS: Scenario[] = [
       'Sets the envelope from strategy and financial constraints, forces explicit cross-functional trade-offs, balances growth with efficiency, and communicates the reasoning for what is not funded.',
   },
 ]
+
+export const scenariosFor = (product: string): Scenario[] =>
+  SCENARIOS.filter((s) => !s.onlyProduct || s.onlyProduct === product.trim().toLowerCase())
 
 export const scenarioById = (id: string) => SCENARIOS.find((scenario) => scenario.id === id)

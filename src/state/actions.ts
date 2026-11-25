@@ -346,7 +346,7 @@ export const startCompany = (form: StartForm) => {
     `Welcome to ${form.companyName}. Nothing here happens on its own: employees reply when you post, and time only moves when you press "Run week". Start in #leadership, where the first situation is waiting. Open roles in Hiring, and ask the Mentor for a review whenever you want feedback.`,
     'system',
   )
-  const first = nextScenario([], get().state.people)
+  const first = nextScenario([], get().state.people, form.product)
   if (first) kickoffScenario(first.id)
   setView({ kind: 'channel', id: 'leadership' })
 }
@@ -406,7 +406,7 @@ const weeklyDigest = (before: Company) => {
   say(
     'leadership',
     SYSTEM_ID,
-    `Week ${state.company.week}: headcount ${f.headcount}, cash ${money(state.company.cash)}, MRR ${money(state.company.mrr)} (growing ${f.growthPct.toFixed(1)}%/mo), burn ${money(f.burn)}/mo, runway ${runwayLabel(f)}.`,
+    `Week ${state.company.week}: headcount ${f.headcount}, cash ${money(state.company.cash)}, revenue ${money(state.company.mrr)}/mo (growing ${f.growthPct.toFixed(1)}%/mo), burn ${money(f.burn)}/mo, runway ${runwayLabel(f)}.`,
     'system',
   )
   const crossed = (limit: number) =>
@@ -500,7 +500,7 @@ export const runWeek = () =>
       weeklyDigest(before)
       const { state } = get()
       if (state.scenarios.filter((r) => r.status === 'active').length < MAX_ACTIVE_SCENARIOS) {
-        const scenario = nextScenario(state.scenarios, state.people)
+        const scenario = nextScenario(state.scenarios, state.people, state.company.product)
         if (scenario) kickoffScenario(scenario.id)
       }
       const speakers = pickUnpromptedSpeakers(state.people, state.settings.activity, rng)

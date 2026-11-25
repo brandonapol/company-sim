@@ -1,4 +1,4 @@
-import { SCENARIOS, stageForHeadcount } from './curriculum.ts'
+import { scenariosFor, stageForHeadcount } from './curriculum.ts'
 import type { Scenario } from './curriculum.ts'
 import { LEVEL_RANK } from './types.ts'
 import type { Activity, Channel, Message, Person, Provider, ScenarioRun, Settings, State } from './types.ts'
@@ -93,10 +93,10 @@ export const homeChannel = (person: Person, channels: Channel[]): Channel => {
   return channels.find((c) => c.kind === 'channel' && c.dept === person.dept) ?? general
 }
 
-export const nextScenario = (runs: ScenarioRun[], people: Person[]): Scenario | null => {
+export const nextScenario = (runs: ScenarioRun[], people: Person[], product: string): Scenario | null => {
   const seen = new Set(runs.map((r) => r.id))
   const stage = stageForHeadcount(headcount(people)).index
-  const unseen = SCENARIOS.filter((s) => !seen.has(s.id))
+  const unseen = scenariosFor(product).filter((s) => !seen.has(s.id))
   return unseen.find((s) => s.stage <= stage) ?? unseen[0] ?? null
 }
 

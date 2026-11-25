@@ -7,7 +7,7 @@ A mentor reads everything you do and tells you how you are leading.
 ## What is in it
 
 - **Channels and DMs** with employees who push back, bring ideas and ask you for decisions.
-- **A curriculum of 27 situations** across five company sizes (Founders 2-10, Team 11-25, Org 26-50, Company 51-100, Scale 101-500):
+- **A curriculum of 27 general situations, plus four specific to Quark (focus vs breadth, the no-subscription revenue model, hardware inventory, support load),** across five company sizes (Founders 2-10, Team 11-25, Org 26-50, Company 51-100, Scale 101-500):
   first marketing hire, positioning, pricing, runway, first manager, underperformers, comp, org design, hiring executives,
   fundraising, boards, layoffs, exec conflict, planning and more. Each comes with a short primer, frameworks to look up, and a rubric.
 - **Hiring**: open a role, get three candidates with real trade-offs, interview them in chat, make an offer. Or delegate hiring to a
