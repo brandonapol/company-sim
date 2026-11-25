@@ -76,6 +76,7 @@
     "shellcheck",
     "shellflags",
     "signups",
+    "stripspace",
     "sourdough",
     "tacoma",
     "topbar",

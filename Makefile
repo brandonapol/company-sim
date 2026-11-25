@@ -60,8 +60,9 @@ node_modules: package-lock.json
 	touch node_modules
 
 .PHONY: setup/hooks
-setup/hooks: ## Install the git pre-commit hook
+setup/hooks: ## Install the git pre-commit and commit-msg hooks
 	ln -sf "$(CURDIR)/git/hooks/pre-commit" "$$(git rev-parse --git-path hooks)/pre-commit"
+	ln -sf "$(CURDIR)/git/hooks/commit-msg" "$$(git rev-parse --git-path hooks)/commit-msg"
 	echo "Git hooks installed"
 
 .PHONY: setup/actionlint
@@ -165,11 +166,15 @@ serve/docker: build/docker ## Run the container image (DOCKER_PORT=8787; APP_PAS
 ##@ Test
 
 .PHONY: test
-test: test/unit test/e2e test/smoke ## Run every test that needs no container
+test: test/unit test/hooks test/e2e test/smoke ## Run every test that needs no container
 
 .PHONY: test/unit
 test/unit: node_modules ## Run unit tests with coverage thresholds
 	npm run test:coverage
+
+.PHONY: test/hooks
+test/hooks: ## Prove the commit-msg hook accepts and rejects what it should
+	./scripts/check-commit-msg-test.bash
 
 .PHONY: test/e2e
 test/e2e: build ## Drive the real UI in a browser, in mock mode (no API keys, no tokens)
@@ -264,6 +269,35 @@ check/shell: ## Lint shell scripts and git hooks with shellcheck
 		exit 1
 	fi
 	shellcheck scripts/*.bash git/hooks/*
+
+# The footer Claude Code appends to a pull request it opens, without its leading
+# emoji so a line matches with or without it.
+ATTRIBUTION_FOOTER := Generated with [Claude Code](https://claude.com/claude-code)
+
+# Not part of `make check`: it needs a pull request number and the network. The
+# pr-text workflow runs it. The commit-msg hook catches the same thing locally.
+.PHONY: check/attribution
+check/attribution: ## Check a pull request carries no Claude Code attribution footer (PR=number)
+	if [[ -z "$(PR)" ]]; then
+		echo "Usage: make check/attribution PR=<pull request number>"
+		exit 1
+	fi
+	if ! command -v gh >/dev/null 2>&1; then
+		echo "gh is not installed. Install the GitHub CLI (https://cli.github.com), then run 'gh auth login'."
+		exit 1
+	fi
+	if ! lines="$$(gh pr view "$(PR)" --repo "$(REPO)" --json title,body,commits --jq '"title: " + .title, (.body | split("\n")[] | "description: " + .), (.commits[] | "commit \(.oid[0:8]): " + (.messageHeadline, (.messageBody | split("\n")[])))')"; then
+		echo "Could not read pull request #$(PR). Check the number, and run 'gh auth login' (in CI, set GH_TOKEN)."
+		exit 1
+	fi
+	if hits="$$(printf '%s\n' "$$lines" | tr -d '\r' | grep -F -- '$(ATTRIBUTION_FOOTER)')"; then
+		echo "Pull request #$(PR) carries the Claude Code attribution footer:"
+		echo ""
+		printf '%s\n' "$$hits" | sed 's/^/  /'
+		echo ""
+		echo "Remove it: edit the pull request title or description, or amend the commit and push. Then re-run this check."
+		exit 1
+	fi
 
 .PHONY: check/vuln
 check/vuln: node_modules ## Check dependencies for known vulnerabilities

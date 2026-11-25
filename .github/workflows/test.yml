@@ -29,6 +29,8 @@ jobs:
       # Fails when coverage drops under the thresholds in vitest.config.ts.
       - name: Unit tests with coverage
         run: make test/unit
+      - name: Git hook tests
+        run: make test/hooks
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
